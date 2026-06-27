@@ -95,3 +95,50 @@ export const atributosEmprendedores = [
   { id: 9, nombre: "Apertura al aprendizaje", descripcion: "Disposición para capacitarse en nuevas técnicas y tendencias", icono: "📚" },
   { id: 10, nombre: "Capacidad para resolver problemas", descripcion: "Habilidad para solucionar inconvenientes con clientes y proveedores", icono: "🔧" }
 ];
+
+export const interpretacionesEmprendedor = {
+  excelente: {
+    rango: [41, 50],
+    titulo: '🌟 Vena Emprendedora Fuerte',
+    descripcion: 'Excelente perfil emprendedor con sólidas bases para el éxito empresarial. Tienes las habilidades y la mentalidad necesarias para liderar y hacer crecer tu negocio.',
+    recomendaciones: [
+      'Continúa desarrollando tus fortalezas y habilidades',
+      'Considera expandir tu negocio o explorar nuevos mercados',
+      'Comparte tu conocimiento mentorando a otros emprendedores',
+      'Mantén tu enfoque en la innovación y mejora continua'
+    ]
+  },
+  bueno: {
+    rango: [31, 40],
+    titulo: '💪 Buen Perfil, Necesita Estructura',
+    descripcion: 'Tienes un potencial emprendedor significativo, pero necesitas mayor organización y sistemas para maximizar tu efectividad.',
+    recomendaciones: [
+      'Implementa sistemas de gestión y organización',
+      'Establece rutinas y procesos claros para tu negocio',
+      'Busca capacitación en áreas donde tengas debilidades',
+      'Desarrolla un plan de negocio estructurado y medible'
+    ]
+  },
+  potencial: {
+    rango: [21, 30],
+    titulo: '🌱 Potencial Presente, Hábitos Débiles',
+    descripcion: 'Muestras interés y potencial emprendedor, pero necesitas fortalecer hábitos y disciplina para convertir tu visión en realidad.',
+    recomendaciones: [
+      'Trabaja en desarrollar disciplina y constancia diaria',
+      'Establece metas claras, específicas y medibles',
+      'Busca un mentor o coach que te guíe en tu camino',
+      'Enfócate en mejorar 2-3 áreas clave a la vez'
+    ]
+  },
+  inicial: {
+    rango: [0, 20],
+    titulo: '🚀 Etapa Inicial, Requiere Bases',
+    descripcion: 'Te encuentras en las primeras etapas del desarrollo emprendedor. Con las herramientas adecuadas, puedes construir una base sólida para el éxito.',
+    recomendaciones: [
+      'Busca capacitación básica en emprendimiento y negocios',
+      'Desarrolla hábitos fundamentales de trabajo y organización',
+      'Considera trabajar con un mentor o coach',
+      'Comienza con metas pequeñas y alcanzables para generar impulso'
+    ]
+  }
+};
