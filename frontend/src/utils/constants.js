@@ -73,6 +73,16 @@ export const matrizTest1 = [
   [50, 51, 52, 53, 54, 55, 56]
 ];
 
+export const descripcionesInteligencia = {
+  LINGÜÍSTICA: 'Capacidad para usar el lenguaje de manera efectiva, tanto en la escritura como en el habla. Excelente para la comunicación, persuasión y narración.',
+  LÓGICA: 'Habilidad para el razonamiento lógico, la resolución de problemas matemáticos y el pensamiento científico. Destaca en análisis y sistemas complejos.',
+  ESPACIAL: 'Capacidad para visualizar y manipular objetos en el espacio. Excelente para el diseño, la arquitectura y las artes visuales.',
+  KINESTÉSICA: 'Habilidad para usar el cuerpo de manera coordinada. Destaca en deportes, danza, artes escénicas y actividades manuales.',
+  MUSICAL: 'Capacidad para apreciar, discriminar y crear música. Sensibilidad al ritmo, tono y melodía.',
+  INTERPERSONAL: 'Habilidad para entender y relacionarse con los demás. Excelente para la enseñanza, la terapia y el liderazgo.',
+  INTRAPERSONAL: 'Capacidad de autoconocimiento y reflexión. Destaca en la introspección, la planificación personal y la sabiduría emocional.'
+};
+
 export const atributosEmprendedores = [
   { id: 1, nombre: "Iniciativa", descripcion: "Capacidad para implementar nuevos servicios y estrategias sin esperar instrucciones", icono: "💡" },
   { id: 2, nombre: "Disciplina", descripcion: "Constancia en horarios, mantenimiento y cumplimiento de compromisos", icono: "⏰" },
