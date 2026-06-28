@@ -16,7 +16,7 @@ export async function onRequest(context) {
     const client = new MongoClient(context.env.MONGODB_URI);
     await client.connect();
     
-    const db = client.db('gokulab');
+    const db = client.db('gokulab_test');
     const collection = db.collection('resultados');
 
     const [totalTests, tiposDistribucion] = await Promise.all([
