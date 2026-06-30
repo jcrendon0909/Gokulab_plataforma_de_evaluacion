@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cf-mongodb-polyfills": "^1.0.1",
     "mongodb": "^4.17.0"
   }
 }
