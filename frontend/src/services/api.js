@@ -1,7 +1,8 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_BASE = 'https://gokulab-plataforma-de-evaluacion.onrender.com';
+// URL CORRECTA del backend en Render
+const API_BASE = 'https://gokulab-plataforma-de-evaluacion.onrender.com/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE,
@@ -25,13 +26,24 @@ apiClient.interceptors.response.use(
 
 const api = {
   guardarResultado: async (data) => {
-    const response = await apiClient.post('/guardar', data);
+    // Ruta CORRECTA con el prefijo /resultados
+    const response = await apiClient.post('/resultados/guardar', data);
     return response.data;
   },
   consultarResultados: async (nombre, tipo = '') => {
     const params = new URLSearchParams({ nombre });
     if (tipo) params.append('tipo', tipo);
-    const response = await apiClient.get(`/consultar?${params}`);
+    // Ruta CORRECTA con el prefijo /resultados
+    const response = await apiClient.get(`/resultados/consultar?${params}`);
+    return response.data;
+  },
+  listarResultados: async (page = 1, limit = 20, filtro = {}) => {
+    const params = new URLSearchParams({ page, limit, ...filtro });
+    const response = await apiClient.get(`/resultados/listar?${params}`);
+    return response.data;
+  },
+  obtenerEstadisticas: async () => {
+    const response = await apiClient.get('/estadisticas');
     return response.data;
   }
 };
