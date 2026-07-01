@@ -3,12 +3,18 @@ import toast from 'react-hot-toast';
 
 const API_BASE = 'https://gokulab-plataforma-de-evaluacion.onrender.com/api';
 
+// Cliente con autenticación básica para todas las peticiones
 const apiClient = axios.create({
   baseURL: API_BASE,
   timeout: 30000,
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json' },
+  auth: {
+    username: 'admin',
+    password: 'gokulab2026'
+  }
 });
 
+// Interceptor para manejar errores
 apiClient.interceptors.response.use(
   response => response,
   error => {
@@ -41,6 +47,11 @@ const api = {
   },
   obtenerEstadisticas: async () => {
     const response = await apiClient.get('/estadisticas');
+    return response.data;
+  },
+  // Nuevo método para generar análisis con LLM (opcional)
+  generarAnalisis: async (resultadoId) => {
+    const response = await apiClient.post(`/analisis/${resultadoId}`);
     return response.data;
   }
 };
