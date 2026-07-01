@@ -1,7 +1,7 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_BASE = '/api';
+const API_BASE = 'https://gokulab-backend-api.onrender.com/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE,
