@@ -1,7 +1,6 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-// URL CORRECTA del backend en Render
 const API_BASE = 'https://gokulab-plataforma-de-evaluacion.onrender.com/api';
 
 const apiClient = axios.create({
@@ -26,14 +25,12 @@ apiClient.interceptors.response.use(
 
 const api = {
   guardarResultado: async (data) => {
-    // Ruta CORRECTA con el prefijo /resultados
     const response = await apiClient.post('/resultados/guardar', data);
     return response.data;
   },
   consultarResultados: async (nombre, tipo = '') => {
     const params = new URLSearchParams({ nombre });
     if (tipo) params.append('tipo', tipo);
-    // Ruta CORRECTA con el prefijo /resultados
     const response = await apiClient.get(`/resultados/consultar?${params}`);
     return response.data;
   },
