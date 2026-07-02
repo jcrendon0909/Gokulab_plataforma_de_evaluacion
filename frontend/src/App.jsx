@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
+import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import Hero from './components/home/Hero';
@@ -9,11 +10,13 @@ import TestCards from './components/home/TestCards';
 import Test1Container from './components/test1/Test1Container';
 import Test2Container from './components/test2/Test2Container';
 import AdminPanel from './components/admin/AdminPanel';
+import Login from './components/auth/Login';
 import './App.css';
 
 function App() {
   const [userData, setUserData] = useState(null);
 
+  // Cargar datos del usuario del test desde localStorage
   useEffect(() => {
     const savedData = localStorage.getItem('gokulab_user');
     if (savedData) {
@@ -32,7 +35,7 @@ function App() {
   };
 
   return (
-    <>
+    <AuthProvider>
       <Helmet>
         <title>GŌKU LAB - Plataforma de Evaluación</title>
         <meta name="description" content="Descubre tus talentos y potencia tu espíritu emprendedor con GŌKU LAB" />
@@ -42,8 +45,9 @@ function App() {
       </Helmet>
 
       <div className="app">
-        <Header userData={userData} setUserData={setUserData} />
-        
+        {/* Header ya no recibe props; usa AuthContext internamente */}
+        <Header />
+
         <main className="main-content">
           <AnimatePresence mode="wait">
             <Routes>
@@ -96,6 +100,18 @@ function App() {
                   <AdminPanel />
                 </motion.div>
               } />
+              <Route path="/login" element={
+                <motion.div
+                  key="login"
+                  variants={pageVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.5 }}
+                >
+                  <Login />
+                </motion.div>
+              } />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AnimatePresence>
@@ -103,8 +119,8 @@ function App() {
 
         <Footer />
       </div>
-    </>
+    </AuthProvider>
   );
 }
 
-export default App; 
+export default App;

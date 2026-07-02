@@ -1,17 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { FaSearch, FaUser, FaCalendar, FaTag, FaPrint } from 'react-icons/fa';
+import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  // Estados del panel
   const [searchTerm, setSearchTerm] = useState('');
   const [tipoTest, setTipoTest] = useState('');
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedResult, setSelectedResult] = useState(null);
 
+  // Redirigir al login si no está autenticado
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
+  // Mostrar loading mientras se verifica autenticación
+  if (authLoading) {
+    return (
+      <div className="admin-panel">
+        <div className="container">
+          <div className="loading-state">Cargando...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no está autenticado, no renderizar nada (el useEffect redirigirá)
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // --- Funciones del panel ---
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
       toast.error('Ingresa un nombre para buscar');
@@ -46,10 +76,11 @@ const AdminPanel = () => {
     });
   };
 
+  // --- Render ---
   return (
     <div className="admin-panel">
       <div className="container">
-        <motion.div 
+        <motion.div
           className="admin-container"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -79,8 +110,8 @@ const AdminPanel = () => {
                   <option value="emprendedor">Actitud Emprendedora</option>
                 </select>
               </div>
-              <button 
-                className="btn btn-primary" 
+              <button
+                className="btn btn-primary"
                 onClick={handleSearch}
                 disabled={loading}
               >
@@ -115,9 +146,9 @@ const AdminPanel = () => {
                         </span>
                       </div>
                     </div>
-                    
+
                     {selectedResult === result._id && (
-                      <motion.div 
+                      <motion.div
                         className="result-detail"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
@@ -129,8 +160,8 @@ const AdminPanel = () => {
                                 <span className="detail-label">{r.tipo}</span>
                                 <span className="detail-value">{r.puntaje}/8</span>
                                 <div className="detail-bar">
-                                  <div 
-                                    className="detail-fill" 
+                                  <div
+                                    className="detail-fill"
                                     style={{ width: `${r.porcentaje}%` }}
                                   />
                                 </div>
@@ -153,8 +184,8 @@ const AdminPanel = () => {
                                 <span className="detail-label">{attr.icono} {attr.nombre}</span>
                                 <span className="detail-value">{attr.puntaje}/5</span>
                                 <div className="detail-bar">
-                                  <div 
-                                    className="detail-fill" 
+                                  <div
+                                    className="detail-fill"
                                     style={{ width: `${(attr.puntaje / 5) * 100}%` }}
                                   />
                                 </div>
