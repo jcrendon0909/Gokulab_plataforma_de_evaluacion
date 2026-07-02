@@ -1,0 +1,98 @@
+.formatted-text {
+  font-family: 'Poppins', sans-serif;
+  color: #1a1a2e;
+  line-height: 1.8;
+}
+
+/* Títulos dentro del análisis */
+.formatted-title {
+  color: #26aaa3;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 16px 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid rgba(38, 170, 163, 0.2);
+}
+
+/* Párrafos normales */
+.formatted-paragraph {
+  margin: 8px 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* Listas */
+.formatted-list {
+  margin: 8px 0 12px 20px;
+  padding-left: 8px;
+  list-style: none;
+}
+
+.formatted-list li {
+  position: relative;
+  padding: 4px 0 4px 24px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.formatted-list li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  color: #f8b50e;
+  font-size: 0.8rem;
+  top: 6px;
+}
+
+/* Negritas dentro del texto */
+.formatted-text strong {
+  color: #26aaa3;
+  font-weight: 700;
+}
+
+/* Sección de análisis en el panel admin */
+.analisis-resultado {
+  background: linear-gradient(135deg, #f8f4ff 0%, #f0ecff 100%);
+  border-left: 4px solid #8b5cf6;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-top: 12px;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.08);
+}
+
+.analisis-resultado h4 {
+  color: #7c3aed;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.analisis-resultado h4::before {
+  content: "✨";
+}
+
+/* Estilos para impresión */
+@media print {
+  .analisis-resultado {
+    background: #f5f0ff !important;
+    border-left: 4px solid #7c3aed !important;
+    padding: 16px 20px !important;
+    break-inside: avoid;
+  }
+
+  .formatted-title {
+    color: #1a1a2e !important;
+    border-bottom-color: #7c3aed !important;
+  }
+
+  .formatted-text strong {
+    color: #7c3aed !important;
+  }
+
+  .formatted-list li::before {
+    color: #7c3aed !important;
+  }
+}

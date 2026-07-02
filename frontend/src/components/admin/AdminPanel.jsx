@@ -6,7 +6,11 @@ import { FaSearch, FaUser, FaCalendar, FaTag, FaPrint } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
 import './AdminPanel.css';
+import FormattedText from '../common/FormattedText';
 
+// ... dentro del renderizado del análisis ...
+
+)}
 const AdminPanel = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -235,11 +239,7 @@ const AdminPanel = () => {
                           {analisisTexto[result._id] && (
                             <div className="analisis-resultado">
                               <h4>📊 Análisis personalizado</h4>
-                              <div className="analisis-contenido">
-                                {analisisTexto[result._id].split('\n').map((line, i) => (
-                                  <p key={i}>{line}</p>
-                                ))}
-                              </div>
+                              <FormattedText text={analisisTexto[result._id]} />
                             </div>
                           )}
                         </div>
