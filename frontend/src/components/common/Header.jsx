@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaUser, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUser, FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { GiBrain } from 'react-icons/gi';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../contexts/AuthContext';
 import './Header.css';
 
-const Header = ({ userData }) => {
+const Header = () => {
+  const { user, logout, isAuthenticated } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -18,10 +22,17 @@ const Header = ({ userData }) => {
 
   const isActive = (path) => location.pathname === path;
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    toast.success('Sesión cerrada');
+  };
+
   return (
     <header className="header">
       <div className="container">
         <div className="header-content">
+          {/* Logo */}
           <Link to="/" className="logo-container">
             <div className="logo-icon">
               <GiBrain size={32} color="white" />
@@ -36,6 +47,7 @@ const Header = ({ userData }) => {
             </div>
           </Link>
 
+          {/* Desktop Navigation */}
           <nav className="nav-desktop">
             {navItems.map((item) => (
               <Link
@@ -54,14 +66,26 @@ const Header = ({ userData }) => {
                 )}
               </Link>
             ))}
-            {userData && (
-              <div className="user-badge">
-                <FaUser />
-                <span>{userData.nombre}</span>
+
+            {/* Sección de autenticación */}
+            {isAuthenticated ? (
+              <div className="user-section">
+                <div className="user-badge">
+                  <FaUser />
+                  <span>{user?.username || 'Admin'}</span>
+                </div>
+                <button className="btn-logout" onClick={handleLogout}>
+                  <FaSignOutAlt />
+                </button>
               </div>
+            ) : (
+              <Link to="/login" className="nav-link">
+                <FaUser /> Login
+              </Link>
             )}
           </nav>
 
+          {/* Mobile Menu Toggle */}
           <button 
             className="menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -70,6 +94,7 @@ const Header = ({ userData }) => {
           </button>
         </div>
 
+        {/* Mobile Navigation */}
         <nav className={`nav-mobile ${mobileMenuOpen ? 'open' : ''}`}>
           {navItems.map((item) => (
             <Link
@@ -82,6 +107,22 @@ const Header = ({ userData }) => {
               {item.label}
             </Link>
           ))}
+          {/* Mobile auth */}
+          {isAuthenticated ? (
+            <div className="user-mobile">
+              <div className="user-badge-mobile">
+                <FaUser />
+                <span>{user?.username || 'Admin'}</span>
+              </div>
+              <button className="btn-logout-mobile" onClick={handleLogout}>
+                <FaSignOutAlt /> Cerrar sesión
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="nav-link-mobile">
+              <FaUser /> Login
+            </Link>
+          )}
         </nav>
       </div>
     </header>
