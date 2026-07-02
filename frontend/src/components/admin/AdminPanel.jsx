@@ -17,6 +17,8 @@ const AdminPanel = () => {
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedResult, setSelectedResult] = useState(null);
+  const [generandoAnalisis, setGenerandoAnalisis] = useState({});
+  const [analisisTexto, setAnalisisTexto] = useState({});
 
   // Redirigir al login si no está autenticado
   useEffect(() => {
@@ -74,6 +76,27 @@ const AdminPanel = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  // Función para generar análisis
+  const handleGenerarAnalisis = async (resultadoId) => {
+    if (generandoAnalisis[resultadoId]) return;
+
+    setGenerandoAnalisis(prev => ({ ...prev, [resultadoId]: true }));
+
+    try {
+      const response = await api.generarAnalisis(resultadoId);
+      if (response.success) {
+        setAnalisisTexto(prev => ({ ...prev, [resultadoId]: response.analisis }));
+        toast.success('✅ Análisis generado exitosamente');
+      } else {
+        toast.error('Error al generar el análisis');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Error al generar el análisis');
+    } finally {
+      setGenerandoAnalisis(prev => ({ ...prev, [resultadoId]: false }));
+    }
   };
 
   // --- Render ---
@@ -153,6 +176,7 @@ const AdminPanel = () => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                       >
+                        {/* Detalle de puntajes */}
                         {result.tipoTest === 'inteligencias' ? (
                           <div className="detail-inteligencias">
                             {result.resultados.map((r, i) => (
@@ -193,6 +217,33 @@ const AdminPanel = () => {
                             ))}
                           </div>
                         )}
+
+                        {/* --- NUEVA SECCIÓN: ANÁLISIS --- */}
+                        <div className="analisis-section">
+                          <button
+                            className="btn btn-secondary"
+                            onClick={() => handleGenerarAnalisis(result._id)}
+                            disabled={generandoAnalisis[result._id]}
+                          >
+                            {generandoAnalisis[result._id] ? (
+                              '⏳ Generando análisis...'
+                            ) : (
+                              '🤖 Generar análisis personalizado'
+                            )}
+                          </button>
+
+                          {analisisTexto[result._id] && (
+                            <div className="analisis-resultado">
+                              <h4>📊 Análisis personalizado</h4>
+                              <div className="analisis-contenido">
+                                {analisisTexto[result._id].split('\n').map((line, i) => (
+                                  <p key={i}>{line}</p>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
                         <button className="btn btn-outline btn-print" onClick={() => window.print()}>
                           <FaPrint /> Imprimir
                         </button>
