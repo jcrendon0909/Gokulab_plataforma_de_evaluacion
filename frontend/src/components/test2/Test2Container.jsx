@@ -54,8 +54,9 @@ const Test2Container = ({ setUserData, userData }) => {
       return;
     }
 
-    if (Object.keys(respuestas).length < 10) {
-      toast.error('Responde todos los 10 atributos');
+    const respondidas = Object.keys(respuestas).length;
+    if (respondidas < 5) {
+      toast.error('Responde al menos 5 atributos para obtener un perfil orientativo');
       return;
     }
 
@@ -72,6 +73,11 @@ const Test2Container = ({ setUserData, userData }) => {
           total: resultadosCalculados.total,
           categoria: resultadosCalculados.categoria,
           detalle: resultadosCalculados.detalle
+        },
+        metadata: {
+          totalRespondidas: respondidas,
+          totalPreguntas: 10,
+          porcentaje: Math.round((respondidas / 10) * 100)
         }
       };
 
@@ -119,6 +125,7 @@ const Test2Container = ({ setUserData, userData }) => {
                 <li>✓ Evalúa cada atributo del 1 al 5</li>
                 <li>✓ 1 = Muy bajo | 5 = Muy alto</li>
                 <li>✓ Sé honesto(a) para obtener resultados precisos</li>
+                <li>✓ Responde al menos 5 atributos para obtener un perfil orientativo</li>
               </ul>
             </div>
 
@@ -241,11 +248,16 @@ const Test2Container = ({ setUserData, userData }) => {
               <button 
                 className="btn btn-secondary"
                 onClick={handleEnviarResultados}
-                disabled={total < 10 || isLoading}
+                disabled={total < 5 || isLoading}
               >
                 {isLoading ? 'Guardando...' : <>Ver Resultados <FaArrowRight /></>}
               </button>
             </div>
+            {total < 5 && (
+              <p className="info-text" style={{ textAlign: 'center', color: '#e67e22', fontSize: '0.9rem', marginTop: '10px' }}>
+                ⚠️ Responde al menos 5 atributos para obtener un perfil orientativo.
+              </p>
+            )}
           </motion.div>
         </div>
       </div>

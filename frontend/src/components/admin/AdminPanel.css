@@ -1,3 +1,7 @@
+/* ============================================
+   ADMIN PANEL - ESTILOS PRINCIPALES
+   ============================================ */
+
 .admin-panel {
   padding: 20px 0;
 }
@@ -11,6 +15,7 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
 }
 
+/* --- HEADER --- */
 .admin-header {
   text-align: center;
   margin-bottom: 30px;
@@ -27,6 +32,7 @@
   margin-top: 5px;
 }
 
+/* --- BÚSQUEDA --- */
 .search-section {
   margin-bottom: 30px;
 }
@@ -78,6 +84,7 @@
   min-width: 120px;
 }
 
+/* --- RESULTADOS --- */
 .results-list {
   display: flex;
   flex-direction: column;
@@ -142,6 +149,7 @@
   gap: 5px;
 }
 
+/* --- DETALLE DEL RESULTADO --- */
 .result-detail {
   margin-top: 15px;
   padding-top: 15px;
@@ -223,6 +231,99 @@
   color: #999;
 }
 
+/* ============================================
+   ANÁLISIS CON IA
+   ============================================ */
+
+.analisis-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.analisis-section .btn {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.analisis-resultado {
+  background: #f0ecff;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border-left: 4px solid #8b5cf6;
+  margin-top: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.08);
+}
+
+.analisis-resultado h4 {
+  color: #7c3aed;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.analisis-resultado h4::before {
+  content: "✨";
+}
+
+/* Estilos para el texto formateado dentro del análisis */
+.analisis-resultado .formatted-text {
+  font-family: 'Poppins', sans-serif;
+  color: #1a1a2e;
+  line-height: 1.8;
+}
+
+.analisis-resultado .formatted-title {
+  color: #26aaa3;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 16px 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid rgba(38, 170, 163, 0.2);
+}
+
+.analisis-resultado .formatted-paragraph {
+  margin: 8px 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.analisis-resultado .formatted-list {
+  margin: 8px 0 12px 20px;
+  padding-left: 8px;
+  list-style: none;
+}
+
+.analisis-resultado .formatted-list li {
+  position: relative;
+  padding: 4px 0 4px 24px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.analisis-resultado .formatted-list li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  color: #f8b50e;
+  font-size: 0.8rem;
+  top: 6px;
+}
+
+.analisis-resultado .formatted-text strong {
+  color: #26aaa3;
+  font-weight: 700;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
 @media (max-width: 768px) {
   .admin-container {
     padding: 20px;
@@ -256,42 +357,11 @@
     font-size: 0.8rem;
   }
 }
-.analisis-section {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid #e0e0e0;
-}
 
-.analisis-section .btn {
-  width: 100%;
-  margin-bottom: 12px;
-}
+/* ============================================
+   ESTILOS DE IMPRESIÓN
+   ============================================ */
 
-.analisis-resultado {
-  background: #f8f9fa;
-  padding: 15px 20px;
-  border-radius: 8px;
-  border-left: 4px solid #26aaa3;
-  margin-top: 10px;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.analisis-resultado h4 {
-  color: #26aaa3;
-  margin-bottom: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.analisis-contenido p {
-  margin: 8px 0;
-  line-height: 1.6;
-  color: #333;
-  font-size: 0.95rem;
-  white-space: pre-wrap;
-}
-/* ===== ESTILOS DE IMPRESIÓN ===== */
 @media print {
   /* Ocultar elementos no imprimibles */
   .search-section,
@@ -301,7 +371,9 @@
   .btn-secondary,
   .menu-toggle,
   .nav-desktop,
-  .nav-mobile {
+  .nav-mobile,
+  .admin-header .btn,
+  .analisis-section .btn {
     display: none !important;
   }
 
@@ -310,12 +382,15 @@
     box-shadow: none !important;
     padding: 0 !important;
     max-width: 100% !important;
+    background: white !important;
   }
 
   .result-item {
     border: 1px solid #ddd !important;
     page-break-inside: avoid;
     margin-bottom: 15px !important;
+    background: white !important;
+    padding: 12px 15px !important;
   }
 
   .result-detail {
@@ -323,6 +398,8 @@
     height: auto !important;
     opacity: 1 !important;
     padding: 10px 0 !important;
+    overflow: visible !important;
+    max-height: none !important;
   }
 
   .result-header {
@@ -333,27 +410,30 @@
 
   /* Análisis con color lila más intenso */
   .analisis-resultado {
-    background: #f0ebff !important;
-    border-left: 4px solid #7c3aed !important;
+    background: #e6d9ff !important;
+    border-left: 4px solid #6d28d9 !important;
     padding: 16px 20px !important;
     border-radius: 4px !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
   }
 
   .analisis-resultado h4 {
-    color: #5b21b6 !important;
+    color: #4c1d95 !important;
   }
 
-  .formatted-title {
+  .analisis-resultado .formatted-title {
     color: #1a1a2e !important;
     border-bottom-color: #7c3aed !important;
   }
 
-  .formatted-text strong {
-    color: #5b21b6 !important;
+  .analisis-resultado .formatted-text strong {
+    color: #4c1d95 !important;
   }
 
-  .formatted-list li::before {
-    color: #7c3aed !important;
+  .analisis-resultado .formatted-list li::before {
+    color: #6d28d9 !important;
   }
 
   .detail-dominante {
@@ -379,9 +459,26 @@
     padding: 0 !important;
   }
 
-  /* Asegurar que no se corten */
   .result-detail {
     overflow: visible !important;
     max-height: none !important;
+  }
+
+  /* Asegurar que los colores de impresión sean visibles */
+  .detail-value {
+    color: #1a1a2e !important;
+  }
+
+  .result-tipo {
+    background: #e9ecef !important;
+    color: #1a1a2e !important;
+  }
+
+  .result-fecha {
+    color: #333 !important;
+  }
+
+  .result-name {
+    color: #1a1a2e !important;
   }
 }

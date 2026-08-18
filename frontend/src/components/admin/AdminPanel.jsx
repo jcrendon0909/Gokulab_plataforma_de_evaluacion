@@ -5,12 +5,9 @@ import toast from 'react-hot-toast';
 import { FaSearch, FaUser, FaCalendar, FaTag, FaPrint } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
-import './AdminPanel.css';
 import FormattedText from '../common/FormattedText';
+import './AdminPanel.css';
 
-// ... dentro del renderizado del análisis ...
-
-)}
 const AdminPanel = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -22,7 +19,6 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(false);
   const [selectedResult, setSelectedResult] = useState(null);
   const [generandoAnalisis, setGenerandoAnalisis] = useState({});
-  const [analisisTexto, setAnalisisTexto] = useState({});
 
   // Redirigir al login si no está autenticado
   useEffect(() => {
@@ -42,7 +38,6 @@ const AdminPanel = () => {
     );
   }
 
-  // Si no está autenticado, no renderizar nada (el useEffect redirigirá)
   if (!isAuthenticated) {
     return null;
   }
@@ -82,7 +77,7 @@ const AdminPanel = () => {
     });
   };
 
-  // Función para generar análisis
+  // ===== FUNCIÓN MODIFICADA: GENERAR Y GUARDAR ANÁLISIS =====
   const handleGenerarAnalisis = async (resultadoId) => {
     if (generandoAnalisis[resultadoId]) return;
 
@@ -91,8 +86,13 @@ const AdminPanel = () => {
     try {
       const response = await api.generarAnalisis(resultadoId);
       if (response.success) {
-        setAnalisisTexto(prev => ({ ...prev, [resultadoId]: response.analisis }));
-        toast.success('✅ Análisis generado exitosamente');
+        // Actualizar el resultado localmente para reflejar el análisis guardado
+        setResultados(prev => prev.map(r => 
+          r._id === resultadoId 
+            ? { ...r, analisis: response.analisis }
+            : r
+        ));
+        toast.success('✅ Análisis generado y guardado exitosamente');
       } else {
         toast.error('Error al generar el análisis');
       }
@@ -222,7 +222,7 @@ const AdminPanel = () => {
                           </div>
                         )}
 
-                        {/* --- NUEVA SECCIÓN: ANÁLISIS --- */}
+                        {/* ===== SECCIÓN DE ANÁLISIS ===== */}
                         <div className="analisis-section">
                           <button
                             className="btn btn-secondary"
@@ -236,10 +236,11 @@ const AdminPanel = () => {
                             )}
                           </button>
 
-                          {analisisTexto[result._id] && (
+                          {/* Mostrar análisis desde el campo guardado en MongoDB */}
+                          {result.analisis && (
                             <div className="analisis-resultado">
                               <h4>📊 Análisis personalizado</h4>
-                              <FormattedText text={analisisTexto[result._id]} />
+                              <FormattedText text={result.analisis} />
                             </div>
                           )}
                         </div>

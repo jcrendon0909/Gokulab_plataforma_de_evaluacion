@@ -43,9 +43,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Si la petición requiere autenticación y falla, limpiar sesión
       sessionStorage.removeItem('adminUser');
-      // Redirigir al login si estamos en una ruta protegida
       if (window.location.pathname.startsWith('/admin')) {
         window.location.href = '/login';
       }
@@ -61,12 +59,10 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Métodos de la API
 const api = {
-  // Método para verificar credenciales (sin autenticación previa)
   verificarCredenciales: async (username, password) => {
     try {
-      const response = await axios.get(`${API_BASE}/resultados/listar?page=1&limit=1`, {
+      await axios.get(`${API_BASE}/resultados/listar?page=1&limit=1`, {
         auth: { username, password }
       });
       return { success: true };
@@ -74,7 +70,6 @@ const api = {
       if (error.response?.status === 401) {
         throw error;
       }
-      // Si hay otro error, lanzarlo
       throw error;
     }
   },

@@ -18,6 +18,7 @@ const Test1Container = ({ setUserData, userData }) => {
   const [respuestas, setRespuestas] = useState([]);
   const [resultados, setResultados] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [nivelConfianza, setNivelConfianza] = useState(null);
 
   useEffect(() => {
     setRespuestas(new Array(preguntasTest1.length).fill(false));
@@ -71,11 +72,41 @@ const Test1Container = ({ setUserData, userData }) => {
       return;
     }
 
-    const respondidas = respuestas.filter(r => r).length;
-    if (respondidas < preguntasTest1.length * 0.5) {
-      toast.error(`Responde al menos ${Math.ceil(preguntasTest1.length * 0.5)} preguntas`);
+    if (userInfo.edad < 5 || userInfo.edad > 99) {
+      toast.error('La edad debe estar entre 5 y 99 años');
       return;
     }
+
+    const respondidas = respuestas.filter(r => r).length;
+    const totalPreguntas = preguntasTest1.length;
+    const porcentajeRespuestas = Math.round((respondidas / totalPreguntas) * 100);
+
+    // Calcular nivel de confianza
+    let nivel = '';
+    let color = '';
+    let mensaje = '';
+    if (porcentajeRespuestas >= 75) {
+      nivel = 'Alta';
+      color = '#27ae60';
+      mensaje = 'Excelente, tu perfil es muy completo y confiable.';
+    } else if (porcentajeRespuestas >= 50) {
+      nivel = 'Media';
+      color = '#f39c12';
+      mensaje = 'Buen avance. Si quieres un perfil más preciso, intenta responder algunas preguntas adicionales.';
+    } else {
+      nivel = 'Baja (Preliminar)';
+      color = '#e67e22';
+      mensaje = 'Este es un resultado orientativo. Te invitamos a reflexionar sobre las preguntas que dejaste sin marcar para obtener un perfil más detallado.';
+    }
+
+    setNivelConfianza({
+      nivel,
+      color,
+      mensaje,
+      porcentaje: porcentajeRespuestas,
+      respondidas,
+      total: totalPreguntas
+    });
 
     setIsLoading(true);
     const resultadosCalculados = calcularResultados();
@@ -87,7 +118,13 @@ const Test1Container = ({ setUserData, userData }) => {
         edad: parseInt(userInfo.edad),
         tipoTest: 'inteligencias',
         resultados: resultadosCalculados.resultadosDetalle,
-        inteligenciaDominante: resultadosCalculados.inteligenciaDominante
+        inteligenciaDominante: resultadosCalculados.inteligenciaDominante,
+        metadata: {
+          totalRespondidas: respondidas,
+          totalPreguntas: totalPreguntas,
+          porcentaje: porcentajeRespuestas,
+          nivelConfianza: nivel
+        }
       };
 
       const response = await api.guardarResultado(data);
@@ -100,8 +137,13 @@ const Test1Container = ({ setUserData, userData }) => {
         }));
         
         setResultados(resultadosCalculados);
-        setCurrentStep(3);
-        toast.success('¡Resultados guardados exitosamente!');
+        setCurrentStep(2);
+        
+        if (response.warning) {
+          toast.success('Resultados guardados (ya existía un registro reciente)');
+        } else {
+          toast.success('¡Resultados guardados exitosamente!');
+        }
       }
     } catch (error) {
       toast.error('Error al guardar los resultados');
@@ -110,6 +152,7 @@ const Test1Container = ({ setUserData, userData }) => {
     }
   };
 
+  // Renderizado de pasos
   const renderStep = () => {
     switch(currentStep) {
       case 0:
@@ -129,12 +172,15 @@ const Test1Container = ({ setUserData, userData }) => {
               Descubre cuáles son tus inteligencias predominantes según la teoría de Howard Gardner.
             </p>
             
+            {/* ===== INSTRUCCIONES MEJORADAS ===== */}
             <div className="info-box">
               <h4>📝 Instrucciones</h4>
               <ul>
-                <li>✓ Marca SOLO las habilidades que practicas regularmente</li>
-                <li>✓ No marques actividades ocasionales</li>
-                <li>✓ Sé honesto(a) para obtener resultados precisos</li>
+                <li>✓ Marca las afirmaciones con las que te sientas <strong>IDENTIFICADO(A)</strong> o que <strong>PRACTIQUES con cierta regularidad</strong>.</li>
+                <li>✓ No necesitas ser un experto para marcar una opción. Si te gusta la actividad o crees que podrías desarrollarla, <strong>márcala</strong>.</li>
+                <li>✓ Esto permite que tu perfil refleje tanto tus habilidades actuales como tus <strong>potenciales intereses</strong>.</li>
+                <li>✓ Si no estás seguro(a), pregúntate: <em>"¿Me gustaría aprender más sobre esto?"</em> Si la respuesta es sí, <strong>márcala</strong>.</li>
+                <li>✓ <strong>Importante:</strong> No importa cuántas marques. Tu perfil se ajustará a tus respuestas.</li>
               </ul>
             </div>
 
@@ -240,16 +286,19 @@ const Test1Container = ({ setUserData, userData }) => {
               <button 
                 className="btn btn-primary"
                 onClick={handleEnviarResultados}
-                disabled={respondidas < totalPreguntas * 0.5 || isLoading}
+                disabled={isLoading}
               >
                 {isLoading ? 'Guardando...' : <>Ver Resultados <FaArrowRight /></>}
               </button>
             </div>
+            <p className="info-text" style={{ textAlign: 'center', color: '#666', fontSize: '0.9rem', marginTop: '10px' }}>
+              💡 Puedes ver tus resultados sin importar cuántas preguntas hayas respondido. 
+              El nivel de confianza se ajustará automáticamente.
+            </p>
           </motion.div>
         );
 
       case 2:
-      case 3:
         return (
           <motion.div 
             className="step-container results-container"
@@ -259,8 +308,36 @@ const Test1Container = ({ setUserData, userData }) => {
           >
             <div className="results-header">
               <h2 className="results-title">🎯 ¡Resultados Completos!</h2>
-              <p className="results-subtitle">{userInfo.nombre}, aquí están tus resultados</p>
+              <p className="results-subtitle">
+                {userInfo.nombre}, aquí están tus resultados
+              </p>
             </div>
+
+            {/* ===== NIVEL DE CONFIANZA ===== */}
+            {nivelConfianza && (
+              <div style={{ 
+                background: nivelConfianza.color + '20', 
+                border: `2px solid ${nivelConfianza.color}`,
+                borderRadius: '12px',
+                padding: '15px 20px',
+                marginBottom: '20px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px'
+              }}>
+                <span style={{ fontSize: '2rem' }}>
+                  {nivelConfianza.nivel === 'Alta' ? '🟢' : nivelConfianza.nivel === 'Media' ? '🟡' : '🟠'}
+                </span>
+                <div>
+                  <strong>Confiabilidad del perfil: {nivelConfianza.nivel}</strong>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: '#555' }}>
+                    Has respondido {nivelConfianza.respondidas} de {nivelConfianza.total} preguntas ({nivelConfianza.porcentaje}%).
+                    <br />
+                    {nivelConfianza.mensaje}
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="results-grid">
               {resultados.resultadosDetalle.map((item, index) => (
@@ -290,7 +367,8 @@ const Test1Container = ({ setUserData, userData }) => {
               <div className="dominant-icon">🏆</div>
               <h3>Inteligencia Dominante</h3>
               <h2 className="dominant-name">{resultados.inteligenciaDominante}</h2>
-              <p>Puntaje: {resultados.maxPuntaje}/8</p>
+              <p>Puntaje: {resultados.maxPuntaje}/8 ({((resultados.maxPuntaje/8)*100).toFixed(0)}%)</p>
+              <p className="dominant-desc">{descripcionesInteligencia[resultados.inteligenciaDominante]}</p>
             </div>
 
             <div className="result-actions">
