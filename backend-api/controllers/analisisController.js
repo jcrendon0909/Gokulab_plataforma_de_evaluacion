@@ -22,7 +22,9 @@ exports.generarAnalisis = async (req, res) => {
             return res.status(400).json({ error: 'Tipo de test no soportado' });
         }
 
-        // Modelo actualizado y disponible en Groq
+        // ===== CAMBIOS AQUÍ =====
+        // 1. No pasamos modelo fijo (null), el servicio usará su lista de fallback.
+        // 2. Descomentamos las opciones para controlar la generación.
         const completion = await groqService.chatCompletion(
             [
                 {
@@ -34,8 +36,8 @@ exports.generarAnalisis = async (req, res) => {
                     content: prompt
                 }
             ],
-             "llama-3.3-70b-versatile",  // ✅ Reemplazo recomendado
-            { temperature: 0.7, max_tokens: 1024 }
+            null,  // ← Sin modelo fijo, el servicio decide automáticamente
+            { temperature: 0.7, max_tokens: 1024 }  // ← Descomentado
         );
 
         const analisis = completion.choices[0]?.message?.content || '';
@@ -59,6 +61,7 @@ exports.generarAnalisis = async (req, res) => {
 
 // ============================================
 // FUNCIONES AUXILIARES PARA CONSTRUIR PROMPTS
+// (Mantener igual)
 // ============================================
 
 function construirPromptInteligencias(resultado) {
