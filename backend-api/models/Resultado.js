@@ -29,6 +29,11 @@ const ResultadoSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  // ===== NUEVO CAMPO =====
+  analisis: {
+    type: String,
+    default: null
+  },
   fecha: {
     type: Date,
     default: Date.now

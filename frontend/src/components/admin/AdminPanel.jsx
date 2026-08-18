@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { FaSearch, FaUser, FaCalendar, FaTag, FaPrint } from 'react-icons/fa';
+import { FaSearch, FaUser, FaCalendar, FaTag, FaPrint, FaFilter, FaSort, FaEye, FaRobot, FaCheckCircle, FaClock } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
 import FormattedText from '../common/FormattedText';
@@ -12,13 +12,16 @@ const AdminPanel = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Estados del panel
-  const [searchTerm, setSearchTerm] = useState('');
-  const [tipoTest, setTipoTest] = useState('');
+  // Estados principales
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedResult, setSelectedResult] = useState(null);
   const [generandoAnalisis, setGenerandoAnalisis] = useState({});
+
+  // Estados de filtros y ordenamiento
+  const [searchTerm, setSearchTerm] = useState('');
+  const [tipoTest, setTipoTest] = useState('todos');
+  const [orden, setOrden] = useState('fecha-desc');
 
   // Redirigir al login si no está autenticado
   useEffect(() => {
@@ -27,57 +30,63 @@ const AdminPanel = () => {
     }
   }, [isAuthenticated, authLoading, navigate]);
 
-  // Mostrar loading mientras se verifica autenticación
-  if (authLoading) {
-    return (
-      <div className="admin-panel">
-        <div className="container">
-          <div className="loading-state">Cargando...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  // --- Funciones del panel ---
-  const handleSearch = async () => {
-    if (!searchTerm.trim()) {
-      toast.error('Ingresa un nombre para buscar');
-      return;
+  // Cargar todos los resultados al montar el componente
+  useEffect(() => {
+    if (isAuthenticated) {
+      cargarResultados();
     }
+  }, [isAuthenticated]);
 
+  const cargarResultados = async () => {
     setLoading(true);
     try {
-      const data = await api.consultarResultados(searchTerm, tipoTest);
-      setResultados(data);
-      if (data.length === 0) {
-        toast('No se encontraron resultados');
-      }
+      const response = await api.listarResultados(1, 100);
+      setResultados(response.data || []);
     } catch (error) {
-      toast.error('Error al buscar');
+      toast.error('Error al cargar los resultados');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') handleSearch();
+  // Función para filtrar y ordenar resultados
+  const getResultadosFiltrados = () => {
+    let filtrados = [...resultados];
+
+    // Filtro por tipo de test
+    if (tipoTest !== 'todos') {
+      filtrados = filtrados.filter(r => r.tipoTest === tipoTest);
+    }
+
+    // Filtro por nombre (búsqueda)
+    if (searchTerm.trim()) {
+      const term = searchTerm.trim().toLowerCase();
+      filtrados = filtrados.filter(r => 
+        r.nombre.toLowerCase().includes(term)
+      );
+    }
+
+    // Ordenamiento
+    switch (orden) {
+      case 'fecha-desc':
+        filtrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        break;
+      case 'fecha-asc':
+        filtrados.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+        break;
+      case 'nombre-asc':
+        filtrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        break;
+      case 'nombre-desc':
+        filtrados.sort((a, b) => b.nombre.localeCompare(a.nombre));
+        break;
+      default:
+        break;
+    }
+
+    return filtrados;
   };
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('es-MX', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  // ===== FUNCIÓN MODIFICADA: GENERAR Y GUARDAR ANÁLISIS =====
   const handleGenerarAnalisis = async (resultadoId) => {
     if (generandoAnalisis[resultadoId]) return;
 
@@ -86,7 +95,7 @@ const AdminPanel = () => {
     try {
       const response = await api.generarAnalisis(resultadoId);
       if (response.success) {
-        // Actualizar el resultado localmente para reflejar el análisis guardado
+        // Actualizar el resultado en el estado local
         setResultados(prev => prev.map(r => 
           r._id === resultadoId 
             ? { ...r, analisis: response.analisis }
@@ -103,7 +112,33 @@ const AdminPanel = () => {
     }
   };
 
-  // --- Render ---
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Renderizado principal
+  if (authLoading) {
+    return (
+      <div className="admin-panel">
+        <div className="container">
+          <div className="loading-state">Cargando...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const resultadosFiltrados = getResultadosFiltrados();
+
   return (
     <div className="admin-panel">
       <div className="container">
@@ -112,73 +147,110 @@ const AdminPanel = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
+          {/* Encabezado */}
           <div className="admin-header">
             <h2>📊 Panel de Administración</h2>
-            <p>Consulta y gestiona los resultados de las evaluaciones</p>
+            <p>Gestiona los resultados de las evaluaciones</p>
           </div>
 
-          <div className="search-section">
+          {/* Barra de filtros y búsqueda */}
+          <div className="filter-section">
             <div className="search-box">
               <div className="search-input-group">
-                <FaUser className="search-icon" />
+                <FaSearch className="search-icon" />
                 <input
                   type="text"
                   placeholder="Buscar por nombre..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={handleKeyPress}
                 />
               </div>
-              <div className="search-input-group">
-                <FaTag className="search-icon" />
+              <div className="filter-group">
+                <FaTag className="filter-icon" />
                 <select value={tipoTest} onChange={(e) => setTipoTest(e.target.value)}>
-                  <option value="">Todos los tests</option>
-                  <option value="inteligencias">Inteligencias Múltiples</option>
-                  <option value="emprendedor">Actitud Emprendedora</option>
+                  <option value="todos">Todos los tests</option>
+                  <option value="inteligencias">🧠 Inteligencias</option>
+                  <option value="emprendedor">🚀 Emprendedor</option>
                 </select>
               </div>
-              <button
-                className="btn btn-primary"
-                onClick={handleSearch}
-                disabled={loading}
-              >
-                {loading ? 'Buscando...' : <><FaSearch /> Buscar</>}
+              <div className="filter-group">
+                <FaSort className="filter-icon" />
+                <select value={orden} onChange={(e) => setOrden(e.target.value)}>
+                  <option value="fecha-desc">📅 Más reciente</option>
+                  <option value="fecha-asc">📅 Más antiguo</option>
+                  <option value="nombre-asc">🔤 A → Z</option>
+                  <option value="nombre-desc">🔤 Z → A</option>
+                </select>
+              </div>
+              <button className="btn btn-outline" onClick={cargarResultados}>
+                🔄 Actualizar
               </button>
             </div>
           </div>
 
-          <div className="results-section">
-            {resultados.length > 0 ? (
-              <div className="results-list">
-                {resultados.map((result, index) => (
-                  <motion.div
-                    key={result._id || index}
-                    className="result-item"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
+          {/* Contador de resultados */}
+          <div className="results-counter">
+            {resultadosFiltrados.length} {resultadosFiltrados.length === 1 ? 'resultado' : 'resultados'} encontrados
+          </div>
+
+          {/* Lista de resultados */}
+          <div className="results-list">
+            {loading ? (
+              <div className="loading-state">Cargando resultados...</div>
+            ) : resultadosFiltrados.length === 0 ? (
+              <div className="empty-state">
+                <p>No se encontraron resultados</p>
+              </div>
+            ) : (
+              resultadosFiltrados.map((result, index) => (
+                <motion.div
+                  key={result._id || index}
+                  className="result-item"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03 }}
+                >
+                  <div 
+                    className="result-header"
                     onClick={() => setSelectedResult(selectedResult === result._id ? null : result._id)}
                   >
-                    <div className="result-header">
-                      <div className="result-user">
-                        <FaUser />
-                        <span className="result-name">{result.nombre}</span>
-                      </div>
-                      <div className="result-meta">
-                        <span className="result-tipo">
-                          {result.tipoTest === 'inteligencias' ? '🧠 Inteligencias' : '🚀 Emprendedor'}
-                        </span>
-                        <span className="result-fecha">
-                          <FaCalendar /> {formatDate(result.fecha)}
-                        </span>
-                      </div>
+                    <div className="result-user">
+                      <FaUser />
+                      <span className="result-name">{result.nombre}</span>
+                      <span className="result-badge">
+                        {result.tipoTest === 'inteligencias' ? '🧠' : '🚀'}
+                      </span>
                     </div>
+                    <div className="result-meta">
+                      <span className="result-tipo">
+                        {result.tipoTest === 'inteligencias' ? 'Inteligencias Múltiples' : 'Actitud Emprendedora'}
+                      </span>
+                      <span className="result-fecha">
+                        <FaCalendar /> {formatDate(result.fecha)}
+                      </span>
+                      {result.analisis ? (
+                        <span className="badge-success">
+                          <FaCheckCircle /> Análisis listo
+                        </span>
+                      ) : (
+                        <span className="badge-pending">
+                          <FaClock /> Sin análisis
+                        </span>
+                      )}
+                      <span className="result-expand">
+                        {selectedResult === result._id ? '▲' : '▼'}
+                      </span>
+                    </div>
+                  </div>
 
+                  <AnimatePresence>
                     {selectedResult === result._id && (
                       <motion.div
                         className="result-detail"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
                       >
                         {/* Detalle de puntajes */}
                         {result.tipoTest === 'inteligencias' ? (
@@ -222,7 +294,7 @@ const AdminPanel = () => {
                           </div>
                         )}
 
-                        {/* ===== SECCIÓN DE ANÁLISIS ===== */}
+                        {/* Sección de análisis */}
                         <div className="analisis-section">
                           <button
                             className="btn btn-secondary"
@@ -231,12 +303,13 @@ const AdminPanel = () => {
                           >
                             {generandoAnalisis[result._id] ? (
                               '⏳ Generando análisis...'
+                            ) : result.analisis ? (
+                              '🔄 Regenerar análisis personalizado'
                             ) : (
                               '🤖 Generar análisis personalizado'
                             )}
                           </button>
 
-                          {/* Mostrar análisis desde el campo guardado en MongoDB */}
                           {result.analisis && (
                             <div className="analisis-resultado">
                               <h4>📊 Análisis personalizado</h4>
@@ -246,21 +319,13 @@ const AdminPanel = () => {
                         </div>
 
                         <button className="btn btn-outline btn-print" onClick={() => window.print()}>
-                          <FaPrint /> Imprimir
+                          <FaPrint /> Imprimir reporte
                         </button>
                       </motion.div>
                     )}
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                {searchTerm ? (
-                  <p>No se encontraron resultados para "{searchTerm}"</p>
-                ) : (
-                  <p>Ingresa un nombre para buscar resultados</p>
-                )}
-              </div>
+                  </AnimatePresence>
+                </motion.div>
+              ))
             )}
           </div>
         </motion.div>
