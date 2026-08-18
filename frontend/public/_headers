@@ -1,14 +1,1 @@
-/assets/*.js
-  Content-Type: application/javascript
-/assets/*.css
-  Content-Type: text/css
-/assets/*.ico
-  Content-Type: image/x-icon
-/assets/*.svg
-  Content-Type: image/svg+xml
-/assets/*.png
-  Content-Type: image/png
-/assets/*.jpg
-  Content-Type: image/jpeg
-/assets/*.woff2
-  Content-Type: font/woff2
+# vacío
