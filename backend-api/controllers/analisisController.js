@@ -34,7 +34,7 @@ exports.generarAnalisis = async (req, res) => {
                     content: prompt
                 }
             ],
-            "llama-3.1-70b-versatile",  // ✅ Modelo actual
+             "llama-3.3-70b-versatile",  // ✅ Reemplazo recomendado
             { temperature: 0.7, max_tokens: 1024 }
         );
 

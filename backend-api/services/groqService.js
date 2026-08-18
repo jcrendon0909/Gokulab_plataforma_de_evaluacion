@@ -23,8 +23,10 @@ function getNextKey() {
 }
 
 // Función principal que hace la petición a Groq con failover
-async function chatCompletion(messages, model = 'llama3-70b-8192', options = {}) {
-    const maxRetries = API_KEYS.length;
+//async function chatCompletion(messages, model = 'llama3-70b-8192', options = {}) {
+async function chatCompletion(messages, model = 'llama-3.3-70b-versatile', options = {}) {
+
+const maxRetries = API_KEYS.length;
     let lastError = null;
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
