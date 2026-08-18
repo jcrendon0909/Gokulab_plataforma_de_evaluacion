@@ -1,3 +1,5 @@
+// backend-api/services/groqService.js
+
 const Groq = require('groq-sdk');
 
 // Lista de API keys
@@ -7,12 +9,14 @@ const API_KEYS = [
     process.env.GROQ_API_KEY_3,
 ].filter(key => key && key.trim() !== '');
 
-// Lista de modelos a probar (en orden de preferencia)
+// 🔥 LISTA ACTUALIZADA - Solo modelos disponibles
 const MODELOS = [
-    'llama-3.1-8b-instant',
-    'mixtral-8x7b-32768',
-    'gemma2-9b-it',
-    // 'llama-3.3-70b-versatile' // si llega a estar disponible, agrégalo al final
+    'llama-3.1-8b-instant',           // ✅ Más rápido y económico
+    'llama-3.3-70b-versatile',         // ✅ Generalista robusto
+    'openai/gpt-oss-120b',             // ✅ OpenAI open-source
+    'deepseek-r1-distill-llama-70b',   // ✅ Razonamiento
+    'meta-llama/llama-4-scout-17b-16e-instruct', // ✅ Llama 4 Scout
+    'qwen/qwen3-32b',                  // ✅ Alternativa de Alibaba
 ];
 
 let currentKeyIndex = 0;
@@ -27,7 +31,6 @@ function getNextKey() {
 }
 
 async function chatCompletion(messages, model = null, options = {}) {
-    // Si no se especifica modelo, usar el primero de la lista
     const modelosAProbar = model ? [model] : MODELOS;
 
     let lastError = null;
@@ -42,19 +45,17 @@ async function chatCompletion(messages, model = null, options = {}) {
                     model: modelo,
                     ...options
                 });
-                return response; // Éxito
+                return response;
             } catch (error) {
                 console.error(`❌ Falló modelo ${modelo} con key ${attempt+1}:`, error.message);
                 lastError = error;
-                // Si el error es de modelo no encontrado o descontinuado, pasamos al siguiente modelo
-                if (error.message.includes('model_not_found') || error.message.includes('decommissioned')) {
-                    break; // Salir del bucle de keys y probar siguiente modelo
+                if (error.message.includes('model_not_found') || 
+                    error.message.includes('decommissioned')) {
+                    break;
                 }
-                // Si es rate limit o auth, probar con otra key
                 if (error.status === 429 || error.status === 401) {
                     continue;
                 }
-                // Otros errores los lanzamos
                 throw error;
             }
         }
