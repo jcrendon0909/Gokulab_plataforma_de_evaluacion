@@ -9,6 +9,7 @@ import Hero from './components/home/Hero';
 import TestCards from './components/home/TestCards';
 import Test1Container from './components/test1/Test1Container';
 import Test2Container from './components/test2/Test2Container';
+import TestLiderazgoContainer from './components/test3/TestLiderazgoContainer'; // <- NUEVO
 import AdminPanel from './components/admin/AdminPanel';
 import Login from './components/auth/Login';
 import './App.css';
@@ -16,7 +17,6 @@ import './App.css';
 function App() {
   const [userData, setUserData] = useState(null);
 
-  // Cargar datos del usuario del test desde localStorage
   useEffect(() => {
     const savedData = localStorage.getItem('gokulab_user');
     if (savedData) {
@@ -45,70 +45,40 @@ function App() {
       </Helmet>
 
       <div className="app">
-        {/* Header ya no recibe props; usa AuthContext internamente */}
         <Header />
 
         <main className="main-content">
           <AnimatePresence mode="wait">
             <Routes>
               <Route path="/" element={
-                <motion.div
-                  key="home"
-                  variants={pageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.5 }}
-                >
+                <motion.div key="home" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.5 }}>
                   <Hero />
                   <TestCards />
                 </motion.div>
               } />
               <Route path="/test/inteligencias" element={
-                <motion.div
-                  key="test1"
-                  variants={pageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.5 }}
-                >
+                <motion.div key="test1" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.5 }}>
                   <Test1Container setUserData={setUserData} userData={userData} />
                 </motion.div>
               } />
               <Route path="/test/emprendedor" element={
-                <motion.div
-                  key="test2"
-                  variants={pageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.5 }}
-                >
+                <motion.div key="test2" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.5 }}>
                   <Test2Container setUserData={setUserData} userData={userData} />
                 </motion.div>
               } />
+              {/* ===== NUEVA RUTA PARA LIDERAZGO ===== */}
+              <Route path="/test/liderazgo" element={
+                <motion.div key="test3" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.5 }}>
+                  <TestLiderazgoContainer setUserData={setUserData} userData={userData} />
+                </motion.div>
+              } />
               <Route path="/admin" element={
-                <motion.div
-                  key="admin"
-                  variants={pageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.5 }}
-                >
+                <motion.div key="admin" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.5 }}>
                   <AdminPanel />
                 </motion.div>
               } />
               <Route path="/login" element={
-                <motion.div
-                  key="login"
-                  variants={pageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.5 }}
-                >
+                <motion.div key="login" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.5 }}>
                   <Login />
                 </motion.div>
               } />

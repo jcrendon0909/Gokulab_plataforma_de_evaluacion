@@ -18,7 +18,7 @@ const ResultadoSchema = new mongoose.Schema({
   },
   tipoTest: {
     type: String,
-    enum: ['inteligencias', 'emprendedor'],
+    enum: ['inteligencias', 'emprendedor', 'liderazgo'],
     default: 'inteligencias'
   },
   resultados: {
@@ -29,7 +29,6 @@ const ResultadoSchema = new mongoose.Schema({
     type: String,
     default: null
   },
-  // ===== NUEVO CAMPO =====
   analisis: {
     type: String,
     default: null

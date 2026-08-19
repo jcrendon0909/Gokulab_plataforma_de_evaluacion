@@ -88,34 +88,33 @@ const AdminPanel = () => {
     hour: '2-digit', minute: '2-digit'
   });
 
-  // ===== NUEVA FUNCIÓN: GENERAR REPORTE EN VENTANA NUEVA =====
+  // ===== GENERAR REPORTE EN VENTANA NUEVA =====
   const generarReporte = (resultado) => {
-    // Crear una ventana nueva
     const ventana = window.open('', '_blank', 'width=800,height=600');
     if (!ventana) {
       toast.error('Permite ventanas emergentes para generar el reporte');
       return;
     }
-
-    // Construir el HTML del reporte
     const html = generarHTMLReporte(resultado);
     ventana.document.write(html);
     ventana.document.close();
     ventana.focus();
-    // Esperar a que cargue y luego imprimir
     ventana.onload = function() {
       ventana.print();
     };
   };
 
-  // ===== FUNCIÓN PARA GENERAR EL HTML DEL REPORTE =====
+  // ===== GENERAR HTML DEL REPORTE (SOPORTE PARA LOS 3 TESTS) =====
   const generarHTMLReporte = (resultado) => {
     const fechaFormateada = formatDate(resultado.fecha);
-    const esInteligencias = resultado.tipoTest === 'inteligencias';
+    const tipo = resultado.tipoTest;
 
-    // Construir las barras de progreso
+    let titulo = '';
     let detallesHTML = '';
-    if (esInteligencias) {
+    let dominanteHTML = '';
+
+    if (tipo === 'inteligencias') {
+      titulo = '🧠 Inteligencias Múltiples';
       detallesHTML = resultado.resultados.map((r, i) => `
         <div class="detail-item">
           <span class="detail-label">${r.tipo}</span>
@@ -125,7 +124,15 @@ const AdminPanel = () => {
           </div>
         </div>
       `).join('');
-    } else {
+      if (resultado.inteligenciaDominante) {
+        dominanteHTML = `
+          <div class="dominante">
+            🏆 Inteligencia Dominante: <strong>${resultado.inteligenciaDominante}</strong>
+          </div>
+        `;
+      }
+    } else if (tipo === 'emprendedor') {
+      titulo = '🚀 Actitud Emprendedora';
       detallesHTML = `
         <div class="detail-total">
           <span class="total-label">Puntaje Total:</span>
@@ -141,9 +148,34 @@ const AdminPanel = () => {
           </div>
         `).join('')}
       `;
+    } else if (tipo === 'liderazgo') {
+      titulo = '👥 Liderazgo Integral';
+      const dims = resultado.resultados.detalle || [];
+      detallesHTML = `
+        <div class="detail-total">
+          <span class="total-label">Puntaje Total:</span>
+          <span class="total-value">${resultado.resultados.puntajeTotal}/210</span>
+        </div>
+        <div class="detail-perfil">
+          <strong>Perfil:</strong> ${resultado.resultados.perfil}
+        </div>
+        <div class="detail-descripcion">
+          <p>${resultado.resultados.descripcion || ''}</p>
+        </div>
+        ${dims.map((dim, i) => `
+          <div class="detail-item">
+            <span class="detail-label">${dim.icon || ''} ${dim.label}</span>
+            <span class="detail-value">${dim.puntaje}/30</span>
+            <div class="detail-bar">
+              <div class="detail-fill" style="width: ${(dim.puntaje / 30) * 100}%; background: ${dim.color || '#26aaa3'};"></div>
+            </div>
+            <span class="detail-nivel" style="font-size: 0.75rem; color: #666;">(${dim.nivel})</span>
+          </div>
+        `).join('')}
+      `;
     }
 
-    // Análisis (si existe)
+    // Análisis
     const analisisHTML = resultado.analisis ? `
       <div class="analisis-section">
         <h3>📊 Análisis personalizado</h3>
@@ -160,7 +192,6 @@ const AdminPanel = () => {
         <meta charset="UTF-8">
         <title>Reporte de Evaluación - ${resultado.nombre}</title>
         <style>
-          /* ===== RESET ===== */
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body {
             font-family: 'Times New Roman', Times, serif;
@@ -169,25 +200,15 @@ const AdminPanel = () => {
             padding: 40px 50px;
             line-height: 1.6;
           }
-          .reporte {
-            max-width: 900px;
-            margin: 0 auto;
-          }
+          .reporte { max-width: 900px; margin: 0 auto; }
           .header {
             text-align: center;
             border-bottom: 3px solid #26aaa3;
             padding-bottom: 15px;
             margin-bottom: 25px;
           }
-          .header h1 {
-            font-size: 28pt;
-            color: #26aaa3;
-            letter-spacing: 1px;
-          }
-          .header .slogan {
-            font-size: 14pt;
-            color: #555;
-          }
+          .header h1 { font-size: 28pt; color: #26aaa3; letter-spacing: 1px; }
+          .header .slogan { font-size: 14pt; color: #555; }
           .header .slogan span { font-weight: 700; }
           .header .slogan .juega { color: #f8b50e; }
           .header .slogan .aprende { color: #d61a1f; }
@@ -218,29 +239,10 @@ const AdminPanel = () => {
             gap: 10px;
             padding: 5px 0;
           }
-          .detail-label {
-            min-width: 120px;
-            font-weight: 600;
-            font-size: 11pt;
-          }
-          .detail-value {
-            font-weight: 600;
-            min-width: 50px;
-            text-align: right;
-            font-size: 11pt;
-          }
-          .detail-bar {
-            flex: 1;
-            height: 10px;
-            background: #e9ecef;
-            border-radius: 5px;
-            overflow: hidden;
-          }
-          .detail-fill {
-            height: 100%;
-            background: #26aaa3;
-            border-radius: 5px;
-          }
+          .detail-label { min-width: 120px; font-weight: 600; font-size: 11pt; }
+          .detail-value { font-weight: 600; min-width: 50px; text-align: right; font-size: 11pt; }
+          .detail-bar { flex: 1; height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; }
+          .detail-fill { height: 100%; background: #26aaa3; border-radius: 5px; }
 
           .detail-total {
             background: #f5f5f5;
@@ -265,22 +267,27 @@ const AdminPanel = () => {
           }
           .dominante strong { color: #f8b50e; }
 
+          .detail-perfil, .detail-descripcion {
+            margin: 8px 0;
+          }
+          .detail-descripcion p {
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+          }
+          .detail-nivel {
+            font-size: 0.75rem;
+            color: #666;
+            margin-left: 4px;
+          }
+
           .analisis-section {
             margin-top: 25px;
             border-top: 2px solid #ddd;
             padding-top: 15px;
           }
-          .analisis-section h3 {
-            color: #26aaa3;
-            font-size: 14pt;
-            margin-bottom: 10px;
-          }
-          .analisis-contenido p {
-            margin: 8px 0;
-            text-align: justify;
-            font-size: 11pt;
-            line-height: 1.6;
-          }
+          .analisis-section h3 { color: #26aaa3; font-size: 14pt; margin-bottom: 10px; }
+          .analisis-contenido p { margin: 8px 0; text-align: justify; font-size: 11pt; line-height: 1.6; }
 
           .footer {
             margin-top: 40px;
@@ -293,7 +300,6 @@ const AdminPanel = () => {
 
           @media print {
             body { padding: 20px; }
-            .no-print { display: none; }
           }
         </style>
       </head>
@@ -313,18 +319,10 @@ const AdminPanel = () => {
             <span>${fechaFormateada}</span>
           </div>
 
-          <div class="titulo-seccion">
-            ${esInteligencias ? '🧠 Inteligencias Múltiples' : '🚀 Actitud Emprendedora'}
-          </div>
+          <div class="titulo-seccion">${titulo}</div>
 
           ${detallesHTML}
-
-          ${esInteligencias && resultado.inteligenciaDominante ? `
-            <div class="dominante">
-              🏆 Inteligencia Dominante: <strong>${resultado.inteligenciaDominante}</strong>
-            </div>
-          ` : ''}
-
+          ${dominanteHTML}
           ${analisisHTML}
 
           <div class="footer">
@@ -367,6 +365,7 @@ const AdminPanel = () => {
                   <option value="todos">Todos los tests</option>
                   <option value="inteligencias">🧠 Inteligencias</option>
                   <option value="emprendedor">🚀 Emprendedor</option>
+                  <option value="liderazgo">👥 Liderazgo</option> {/* ← NUEVO */}
                 </select>
               </div>
               <div className="filter-group">
@@ -396,10 +395,18 @@ const AdminPanel = () => {
                     <div className="result-user">
                       <FaUser />
                       <span className="result-name">{result.nombre}</span>
-                      <span className="result-badge">{result.tipoTest === 'inteligencias' ? '🧠' : '🚀'}</span>
+                      <span className="result-badge">
+                        {result.tipoTest === 'inteligencias' ? '🧠' : 
+                         result.tipoTest === 'emprendedor' ? '🚀' : 
+                         '👥'}
+                      </span>
                     </div>
                     <div className="result-meta">
-                      <span className="result-tipo">{result.tipoTest === 'inteligencias' ? 'Inteligencias Múltiples' : 'Actitud Emprendedora'}</span>
+                      <span className="result-tipo">
+                        {result.tipoTest === 'inteligencias' ? 'Inteligencias Múltiples' : 
+                         result.tipoTest === 'emprendedor' ? 'Actitud Emprendedora' : 
+                         'Liderazgo Integral'}
+                      </span>
                       <span className="result-fecha"><FaCalendar /> {formatDate(result.fecha)}</span>
                       {result.analisis ? (
                         <span className="badge-success"><FaCheckCircle /> Análisis listo</span>
@@ -425,7 +432,7 @@ const AdminPanel = () => {
                               <div className="detail-dominante">🏆 Dominante: <strong>{result.inteligenciaDominante}</strong></div>
                             )}
                           </div>
-                        ) : (
+                        ) : result.tipoTest === 'emprendedor' ? (
                           <div className="detail-emprendedor">
                             <div className="detail-total"><span className="total-label">Puntaje Total:</span><span className="total-value">{result.resultados.total}/50</span></div>
                             {result.resultados.detalle?.map((attr, i) => (
@@ -433,6 +440,30 @@ const AdminPanel = () => {
                                 <span className="detail-label">{attr.icono} {attr.nombre}</span>
                                 <span className="detail-value">{attr.puntaje}/5</span>
                                 <div className="detail-bar"><div className="detail-fill" style={{ width: `${(attr.puntaje / 5) * 100}%` }} /></div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          // ===== BLOQUE PARA LIDERAZGO =====
+                          <div className="detail-liderazgo">
+                            <div className="detail-total">
+                              <span className="total-label">Puntaje Total:</span>
+                              <span className="total-value">{result.resultados.puntajeTotal}/210</span>
+                            </div>
+                            <div className="detail-perfil">
+                              <strong>Perfil:</strong> {result.resultados.perfil}
+                            </div>
+                            <div className="detail-descripcion">
+                              <p>{result.resultados.descripcion || ''}</p>
+                            </div>
+                            {result.resultados.detalle?.map((dim, i) => (
+                              <div key={i} className="detail-item">
+                                <span className="detail-label">{dim.icon} {dim.label}</span>
+                                <span className="detail-value">{dim.puntaje}/30</span>
+                                <div className="detail-bar">
+                                  <div className="detail-fill" style={{ width: `${(dim.puntaje / 30) * 100}%`, background: dim.color || '#26aaa3' }} />
+                                </div>
+                                <span className="detail-nivel" style={{ fontSize: '0.75rem', color: '#666' }}>({dim.nivel})</span>
                               </div>
                             ))}
                           </div>
@@ -448,7 +479,6 @@ const AdminPanel = () => {
                             </div>
                           )}
                         </div>
-                        {/* ===== BOTÓN DE IMPRIMIR MODIFICADO ===== */}
                         <button className="btn btn-outline btn-print" onClick={() => generarReporte(result)}>
                           <FaPrint /> Imprimir reporte
                         </button>

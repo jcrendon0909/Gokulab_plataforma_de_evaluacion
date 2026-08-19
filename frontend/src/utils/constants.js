@@ -1,3 +1,6 @@
+// ============================================
+// TEST DE INTELIGENCIAS MÚLTIPLES
+// ============================================
 export const preguntasTest1 = [
   "Los libros son muy importantes para mí",
   "Fácilmente puedo memorizar números en mi cabeza",
@@ -58,7 +61,7 @@ export const preguntasTest1 = [
 ];
 
 export const tiposInteligencia = [
-  'LINGÜÍSTICA', 'LÓGICA', 'ESPACIAL', 'KINESTÉSICA', 
+  'LINGÜÍSTICA', 'LÓGICA', 'ESPACIAL', 'KINESTÉSICA',
   'MUSICAL', 'INTERPERSONAL', 'INTRAPERSONAL'
 ];
 
@@ -83,6 +86,9 @@ export const descripcionesInteligencia = {
   INTRAPERSONAL: 'Capacidad de autoconocimiento y reflexión. Destaca en la introspección, la planificación personal y la sabiduría emocional.'
 };
 
+// ============================================
+// TEST DE ACTITUD EMPRENDEDORA
+// ============================================
 export const atributosEmprendedores = [
   { id: 1, nombre: "Iniciativa", descripcion: "Capacidad para implementar nuevos servicios y estrategias sin esperar instrucciones", icono: "💡" },
   { id: 2, nombre: "Disciplina", descripcion: "Constancia en horarios, mantenimiento y cumplimiento de compromisos", icono: "⏰" },
@@ -97,48 +103,101 @@ export const atributosEmprendedores = [
 ];
 
 export const interpretacionesEmprendedor = {
-  excelente: {
-    rango: [41, 50],
-    titulo: '🌟 Vena Emprendedora Fuerte',
-    descripcion: 'Excelente perfil emprendedor con sólidas bases para el éxito empresarial. Tienes las habilidades y la mentalidad necesarias para liderar y hacer crecer tu negocio.',
-    recomendaciones: [
-      'Continúa desarrollando tus fortalezas y habilidades',
-      'Considera expandir tu negocio o explorar nuevos mercados',
-      'Comparte tu conocimiento mentorando a otros emprendedores',
-      'Mantén tu enfoque en la innovación y mejora continua'
-    ]
-  },
-  bueno: {
-    rango: [31, 40],
-    titulo: '💪 Buen Perfil, Necesita Estructura',
-    descripcion: 'Tienes un potencial emprendedor significativo, pero necesitas mayor organización y sistemas para maximizar tu efectividad.',
-    recomendaciones: [
-      'Implementa sistemas de gestión y organización',
-      'Establece rutinas y procesos claros para tu negocio',
-      'Busca capacitación en áreas donde tengas debilidades',
-      'Desarrolla un plan de negocio estructurado y medible'
-    ]
-  },
-  potencial: {
-    rango: [21, 30],
-    titulo: '🌱 Potencial Presente, Hábitos Débiles',
-    descripcion: 'Muestras interés y potencial emprendedor, pero necesitas fortalecer hábitos y disciplina para convertir tu visión en realidad.',
-    recomendaciones: [
-      'Trabaja en desarrollar disciplina y constancia diaria',
-      'Establece metas claras, específicas y medibles',
-      'Busca un mentor o coach que te guíe en tu camino',
-      'Enfócate en mejorar 2-3 áreas clave a la vez'
-    ]
-  },
-  inicial: {
-    rango: [0, 20],
-    titulo: '🚀 Etapa Inicial, Requiere Bases',
-    descripcion: 'Te encuentras en las primeras etapas del desarrollo emprendedor. Con las herramientas adecuadas, puedes construir una base sólida para el éxito.',
-    recomendaciones: [
-      'Busca capacitación básica en emprendimiento y negocios',
-      'Desarrolla hábitos fundamentales de trabajo y organización',
-      'Considera trabajar con un mentor o coach',
-      'Comienza con metas pequeñas y alcanzables para generar impulso'
-    ]
-  }
+  excelente: { rango: [41, 50], titulo: '🌟 Vena Emprendedora Fuerte', descripcion: 'Excelente perfil emprendedor con sólidas bases para el éxito empresarial.', recomendaciones: ['Continúa desarrollando tus fortalezas', 'Considera expandir tu negocio', 'Comparte tu conocimiento mentorando a otros'] },
+  bueno: { rango: [31, 40], titulo: '💪 Buen Perfil, Necesita Estructura', descripcion: 'Tienes un potencial emprendedor significativo, pero necesitas mayor organización.', recomendaciones: ['Implementa sistemas de gestión', 'Establece rutinas claras', 'Busca capacitación en áreas débiles'] },
+  potencial: { rango: [21, 30], titulo: '🌱 Potencial Presente, Hábitos Débiles', descripcion: 'Muestras interés y potencial, pero necesitas fortalecer hábitos.', recomendaciones: ['Trabaja en disciplina diaria', 'Establece metas medibles', 'Busca un mentor'] },
+  inicial: { rango: [0, 20], titulo: '🚀 Etapa Inicial, Requiere Bases', descripcion: 'Te encuentras en las primeras etapas del desarrollo emprendedor.', recomendaciones: ['Busca capacitación básica', 'Desarrolla hábitos fundamentales', 'Comienza con metas pequeñas'] }
 };
+
+// ============================================
+// TEST DE LIDERAZGO INTEGRAL (NUEVO)
+// ============================================
+export const preguntasLiderazgo = [
+  // Estratégica (1-6)
+  "Defino objetivos de largo plazo para mi equipo.",
+  "Analizo cómo cada decisión afecta al resto de la organización.",
+  "Distingo lo urgente de lo importante.",
+  "Elaboro planes claros para alcanzar metas.",
+  "Identifico riesgos antes de actuar.",
+  "Tomo decisiones basadas en datos y evidencia.",
+  // Transformacional (7-12)
+  "Motivo a otros a dar lo mejor de sí.",
+  "Promuevo ideas nuevas y creativas.",
+  "Transformo procesos para mejorar.",
+  "Conecto el trabajo diario con un propósito mayor.",
+  "Transmito entusiasmo y optimismo.",
+  "Uso historias para motivar.",
+  // Operativa (13-18)
+  "Verifico que las tareas se cumplan.",
+  "Me aseguro de que se sigan los procesos.",
+  "Reviso avances constantemente.",
+  "Me enfoco en cumplir metas inmediatas.",
+  "Corrijo errores rápidamente.",
+  "Mantengo disciplina y estructura.",
+  // Social (19-24)
+  "Comprendo las emociones de los demás.",
+  "Expreso ideas con claridad.",
+  "Presto atención genuina a las personas.",
+  "Convenzo sin imponer.",
+  "Manejo desacuerdos de forma constructiva.",
+  "Construyo vínculos de confianza.",
+  // Adaptativa (25-30)
+  "Me adapto a cambios inesperados.",
+  "Mantengo la calma bajo presión.",
+  "Busco aprender constantemente.",
+  "Encuentro soluciones diferentes.",
+  "Guío a otros durante cambios.",
+  "Cambio de estrategia cuando es necesario.",
+  // Ética (31-36)
+  "Trato a todos con equidad.",
+  "Actúo conforme a mis valores.",
+  "Asumo consecuencias de mis decisiones.",
+  "Comunico con honestidad.",
+  "Mis acciones reflejan mis principios.",
+  "Genero credibilidad.",
+  // Desarrollo de Personas (37-42)
+  "Ayudo a otros a mejorar.",
+  "Comparto experiencia para guiar.",
+  "Delego para desarrollar talento.",
+  "Doy retroalimentación útil.",
+  "Impulso el desarrollo del equipo.",
+  "Doy autonomía y confianza."
+];
+
+export const dimensionesLiderazgo = [
+  { id: 'estrategica', label: 'Estratégica', icon: '🎯', color: '#26aaa3', preguntas: [0,1,2,3,4,5] },
+  { id: 'transformacional', label: 'Transformacional', icon: '🔥', color: '#f8b50e', preguntas: [6,7,8,9,10,11] },
+  { id: 'operativa', label: 'Operativa', icon: '⚙️', color: '#67a934', preguntas: [12,13,14,15,16,17] },
+  { id: 'social', label: 'Social', icon: '🤝', color: '#4a90d9', preguntas: [18,19,20,21,22,23] },
+  { id: 'adaptativa', label: 'Adaptativa', icon: '🌀', color: '#9b59b6', preguntas: [24,25,26,27,28,29] },
+  { id: 'etica', label: 'Ética', icon: '⚖️', color: '#e67e22', preguntas: [30,31,32,33,34,35] },
+  { id: 'desarrollo', label: 'Desarrollo de Personas', icon: '🌱', color: '#e74c3c', preguntas: [36,37,38,39,40,41] }
+];
+
+export const perfilesLiderazgo = {
+  'Líder Integral': 'Alto desempeño en todas las inteligencias de liderazgo. Eres un líder completo, capaz de inspirar, ejecutar, conectar y adaptarte.',
+  'Líder Estratégico': 'Fuerte visión, ética sólida y foco en desarrollo de personas. Destacas en planificar el futuro y guiar a otros hacia metas ambiciosas.',
+  'Líder Transformacional': 'Inspiras, movilizas el cambio y gestionas bien la adaptación. Tu energía y creatividad contagian al equipo.',
+  'Líder Funcional': 'Combina ejecución operativa con buena inteligencia social. Eres efectivo tanto en el día a día como en las relaciones interpersonales.',
+  'Jefe Operativo': 'Fuerte en control y ejecución, con oportunidad de crecimiento en lo social y desarrollo de personas. Puedes evolucionar hacia un liderazgo más integral.',
+  'Perfil Mixto': 'Combina rasgos de jefe y líder. Recomendable trabajar en visión estratégica, desarrollo de personas y habilidades sociales para consolidar un liderazgo más integral.'
+};
+
+export function clasificarNivelLiderazgo(puntaje) {
+  if (puntaje <= 15) return 'Baja';
+  if (puntaje <= 22) return 'Media';
+  return 'Alta';
+}
+
+export function obtenerPerfilLiderazgo(dimensiones) {
+  const { estrategica, transformacional, operativa, social, adaptativa, etica, desarrollo } = dimensiones;
+
+  const todasAltas = Object.values(dimensiones).every(v => v >= 23);
+  if (todasAltas) return 'Líder Integral';
+
+  if (estrategica >= 23 && etica >= 23 && desarrollo >= 23) return 'Líder Estratégico';
+  if (transformacional >= 23 && social >= 23 && adaptativa >= 23) return 'Líder Transformacional';
+  if (operativa >= 23 && social >= 23 && estrategica >= 16) return 'Líder Funcional';
+  if (operativa >= 23 && social <= 22 && desarrollo <= 22) return 'Jefe Operativo';
+  return 'Perfil Mixto';
+}
