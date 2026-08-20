@@ -30,3 +30,4 @@ build/
 
 # Cloudflare
 .wrangler/
+frontend/node_modules_old/
