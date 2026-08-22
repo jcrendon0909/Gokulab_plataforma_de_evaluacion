@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { FaRocket, FaBrain } from 'react-icons/fa';
+import { FaRocket, FaBrain, FaUsers } from 'react-icons/fa';
 import './Hero.css';
 
 const Hero = () => {
@@ -64,6 +64,13 @@ const Hero = () => {
             >
               <FaRocket /> Test Emprendedor
             </button>
+            {/* ===== NUEVO BOTÓN PARA LIDERAZGO ===== */}
+            <button 
+              className="btn btn-primary"
+              onClick={() => navigate('/test/liderazgo')}
+            >
+              <FaUsers /> Test de Liderazgo
+            </button>
           </motion.div>
 
           <motion.div 
@@ -73,12 +80,12 @@ const Hero = () => {
             transition={{ duration: 1, delay: 1 }}
           >
             <div className="stat-item">
-              <span className="stat-number">2</span>
+              <span className="stat-number">3</span> {/* ← Cambiado de 2 a 3 */}
               <span className="stat-label">Tests Disponibles</span>
             </div>
             <div className="stat-divider"></div>
             <div className="stat-item">
-              <span className="stat-number">66</span>
+              <span className="stat-number">66</span> {/* ← Puedes cambiarlo a 108 si quieres */}
               <span className="stat-label">Preguntas Total</span>
             </div>
             <div className="stat-divider"></div>
