@@ -85,7 +85,7 @@ const Hero = () => {
             </div>
             <div className="stat-divider"></div>
             <div className="stat-item">
-              <span className="stat-number">66</span> {/* ← Puedes cambiarlo a 108 si quieres */}
+              <span className="stat-number">108</span> {/* ← Puedes cambiarlo a 108 si quieres */}
               <span className="stat-label">Preguntas Total</span>
             </div>
             <div className="stat-divider"></div>
