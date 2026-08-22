@@ -15,7 +15,7 @@ const TestCards = () => {
       description: 'Descubre tus habilidades predominantes según la teoría de Howard Gardner. Identifica tus fortalezas en 7 áreas diferentes.',
       features: ['56 preguntas', '7 tipos de inteligencia', 'Resultados detallados'],
       color: 'primary',
-      path: '/test/inteligencias',
+      path: '/test/inteligencias', // ← NUEVO
       time: '10-15 min'
     },
     {

@@ -17,6 +17,7 @@ const Header = () => {
     { path: '/', label: 'Inicio', icon: '🏠' },
     { path: '/test/inteligencias', label: 'Inteligencias', icon: '🧠' },
     { path: '/test/emprendedor', label: 'Emprendedor', icon: '🚀' },
+    { path: '/test/liderazgo', label: 'Liderazgo', icon: '👥' }, // ← NUEVO
     { path: '/admin', label: 'Administrar', icon: '📊' }
   ];
 
