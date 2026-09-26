@@ -9,7 +9,8 @@ import {
   clasificarNivelLiderazgo,
   obtenerPerfilLiderazgo,
   perfilesLiderazgo,
-  GOKULAB_WHATSAPP
+  GOKULAB_WHATSAPP,
+  opcionesOcupacion
 } from '../../utils/constants';
 import api from '../../services/api';
 import './TestLiderazgoContainer.css';
@@ -21,7 +22,9 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
   const [userInfo, setUserInfo] = useState({
     nombre: userData?.nombre || '',
     email: userData?.email || '',
-    edad: ''
+    edad: '',
+    ocupacion: '',
+    giroEspecifico: ''
   });
   const [respuestas, setRespuestas] = useState({});
   const [resultados, setResultados] = useState(null);
@@ -68,7 +71,7 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
   };
 
   const handleEnviarResultados = async () => {
-    if (!userInfo.nombre || !userInfo.email || !userInfo.edad) {
+    if (!userInfo.nombre || !userInfo.email || !userInfo.edad || !userInfo.ocupacion) {
       toast.error('Por favor completa todos tus datos');
       return;
     }
@@ -86,6 +89,8 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
         nombre: userInfo.nombre.trim(),
         email: userInfo.email.trim(),
         edad: parseInt(userInfo.edad),
+        ocupacion: userInfo.ocupacion,
+        giroEspecifico: userInfo.giroEspecifico.trim() || null,
         tipoTest: 'liderazgo',
         resultados: {
           dimensiones: resultadosCalculados.dimensiones,
@@ -122,23 +127,16 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
     window.open(`https://wa.me/${GOKULAB_WHATSAPP}?text=${mensaje}`, '_blank');
   };
 
-  // ===== PASO 0: INTRO CON INFOGRAFÍA + COPY =====
   if (currentStep === 0) {
     return (
       <div className="test-liderazgo-container">
         <div className="container">
-          <motion.div
-            className="step-container intro-container"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-          >
+          <motion.div className="step-container intro-container" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
             <div className="step-header">
               <div className="step-icon"><FaUsers /></div>
               <h2 className="step-title">👥 Test de Liderazgo Integral</h2>
             </div>
 
-            {/* ===== COPY INICIAL ===== */}
             <div className="intro-copy">
               <p>
                 Es importante que conozcas tus <strong>fortalezas</strong> y <strong>áreas de oportunidad</strong> en las
@@ -147,16 +145,10 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
               </p>
             </div>
 
-            {/* ===== INFOGRAFÍA ===== */}
             <div className="intro-infografia">
-              <img
-                src="https://media.gokulab.mx/Infografias/Dimensiones-Liderazgo-Gerencial.png"
-                alt="Siete dimensiones del liderazgo gerencial - GŌKU LAB"
-                className="infografia-img"
-              />
+              <img src="/images/infografia-liderazgo.png" alt="Siete dimensiones del liderazgo gerencial - GŌKU LAB" className="infografia-img" />
             </div>
 
-            {/* ===== INSTRUCCIONES ===== */}
             <div className="info-box">
               <h4>📝 Instrucciones</h4>
               <ul>
@@ -167,7 +159,6 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
               </ul>
             </div>
 
-            {/* ===== DATOS PERSONALES ===== */}
             <div className="form-section">
               <h4>📋 Datos Personales</h4>
               <div className="form-grid">
@@ -183,14 +174,22 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
                   <label>Edad *</label>
                   <input type="number" name="edad" value={userInfo.edad} onChange={handleUserInfoChange} placeholder="Tu edad" min="5" max="99" />
                 </div>
+                <div className="input-group">
+                  <label>Ocupación *</label>
+                  <select name="ocupacion" value={userInfo.ocupacion} onChange={handleUserInfoChange} required>
+                    {opcionesOcupacion.map(op => (
+                      <option key={op.value} value={op.value}>{op.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <label>¿En qué giro? (opcional)</label>
+                  <input type="text" name="giroEspecifico" value={userInfo.giroEspecifico} onChange={handleUserInfoChange} placeholder="Ej: Estética de belleza, Ventas, Educación..." maxLength={60} />
+                </div>
               </div>
             </div>
 
-            <button
-              className="btn btn-primary btn-block"
-              onClick={() => setCurrentStep(1)}
-              disabled={!userInfo.nombre || !userInfo.email || !userInfo.edad}
-            >
+            <button className="btn btn-primary btn-block" onClick={() => setCurrentStep(1)} disabled={!userInfo.nombre || !userInfo.email || !userInfo.edad || !userInfo.ocupacion}>
               Comenzar Test <FaArrowRight />
             </button>
           </motion.div>
@@ -199,7 +198,6 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
     );
   }
 
-  // ===== PASO 1: PREGUNTAS =====
   if (currentStep === 1) {
     const totalPreguntas = preguntasLiderazgo.length;
     const respondidas = Object.values(respuestas).filter(v => v !== null).length;
@@ -267,7 +265,6 @@ const TestLiderazgoContainer = ({ setUserData, userData }) => {
     );
   }
 
-  // ===== PASO 2: RESULTADOS =====
   return (
     <div className="test-liderazgo-container">
       <div className="container">

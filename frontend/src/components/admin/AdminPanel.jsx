@@ -110,6 +110,19 @@ const AdminPanel = () => {
     hour: '2-digit', minute: '2-digit'
   });
 
+  // ===== MAPA DE OCUPACIONES PARA ETIQUETAS LEGIBLES =====
+  const mapaOcupacionLabels = {
+    estudiante: 'Estudiante',
+    empleado: 'Empleado(a) / Colaborador(a)',
+    emprendedor: 'Emprendedor(a) / Dueño(a) de negocio',
+    freelancer: 'Freelancer / Independiente',
+    directivo: 'Directivo(a) / Gerente',
+    docente: 'Docente / Instructor(a)',
+    hogar: 'Labores del hogar',
+    buscando: 'Buscando oportunidad',
+    otro: 'Otro'
+  };
+
   if (authLoading) return <div className="loading-state">Cargando...</div>;
   if (!isAuthenticated) return null;
 
@@ -185,6 +198,13 @@ const AdminPanel = () => {
                           >
                             ✉️ {result.email}
                           </a>
+                        )}
+                        {result.ocupacion && (
+                          <span className="result-ocupacion">
+                            💼 {mapaOcupacionLabels[result.ocupacion] || result.ocupacion}
+                            {result.giroEspecifico ? ` · ${result.giroEspecifico}` : ''}
+                            {result.edad ? ` · ${result.edad} años` : ''}
+                          </span>
                         )}
                       </div>
                       <span className="result-badge">

@@ -395,3 +395,9 @@
 
   * { box-shadow: none !important; text-shadow: none !important; }
 }
+.result-ocupacion {
+  color: #666;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 2px;
+}

@@ -1,9 +1,8 @@
 const Resultado = require('../models/Resultado');
 
-// Guardar un nuevo resultado
 exports.guardarResultado = async (req, res) => {
   try {
-    const { nombre, email, edad, tipoTest, resultados, inteligenciaDominante } = req.body;
+    const { nombre, email, edad, ocupacion, giroEspecifico, tipoTest, resultados, inteligenciaDominante } = req.body;
 
     if (!nombre || !resultados) {
       return res.status(400).json({ error: 'Faltan datos requeridos' });
@@ -13,6 +12,8 @@ exports.guardarResultado = async (req, res) => {
       nombre: nombre.trim(),
       email: email || '',
       edad: parseInt(edad) || null,
+      ocupacion: ocupacion || null,
+      giroEspecifico: giroEspecifico || null,
       tipoTest: tipoTest || 'inteligencias',
       resultados,
       inteligenciaDominante: inteligenciaDominante || null
@@ -30,11 +31,9 @@ exports.guardarResultado = async (req, res) => {
   }
 };
 
-// Consultar resultados por nombre
 exports.consultarResultados = async (req, res) => {
   try {
     const { nombre, tipo } = req.query;
-
     if (!nombre) {
       return res.status(400).json({ error: 'Se requiere el parámetro nombre' });
     }
@@ -50,7 +49,6 @@ exports.consultarResultados = async (req, res) => {
   }
 };
 
-// Listar todos los resultados (paginado)
 exports.listarResultados = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -80,11 +78,9 @@ exports.listarResultados = async (req, res) => {
   }
 };
 
-// ===== ELIMINAR un resultado por ID =====
 exports.eliminarResultado = async (req, res) => {
   try {
     const { id } = req.params;
-
     const resultado = await Resultado.findByIdAndDelete(id);
 
     if (!resultado) {

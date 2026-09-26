@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { FaRocket, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import { atributosEmprendedores, interpretacionesEmprendedor, GOKULAB_WHATSAPP } from '../../utils/constants';
+import { atributosEmprendedores, interpretacionesEmprendedor, GOKULAB_WHATSAPP, opcionesOcupacion } from '../../utils/constants';
 import api from '../../services/api';
 import './Test2Container.css';
 
@@ -13,7 +13,9 @@ const Test2Container = ({ setUserData, userData }) => {
   const [userInfo, setUserInfo] = useState({
     nombre: userData?.nombre || '',
     email: userData?.email || '',
-    edad: ''
+    edad: '',
+    ocupacion: '',
+    giroEspecifico: ''
   });
   const [respuestas, setRespuestas] = useState({});
   const [resultados, setResultados] = useState(null);
@@ -43,7 +45,7 @@ const Test2Container = ({ setUserData, userData }) => {
   };
 
   const handleEnviarResultados = async () => {
-    if (!userInfo.nombre || !userInfo.email || !userInfo.edad) {
+    if (!userInfo.nombre || !userInfo.email || !userInfo.edad || !userInfo.ocupacion) {
       toast.error('Por favor completa todos tus datos');
       return;
     }
@@ -61,6 +63,8 @@ const Test2Container = ({ setUserData, userData }) => {
         nombre: userInfo.nombre.trim(),
         email: userInfo.email.trim(),
         edad: parseInt(userInfo.edad),
+        ocupacion: userInfo.ocupacion,
+        giroEspecifico: userInfo.giroEspecifico.trim() || null,
         tipoTest: 'emprendedor',
         resultados: {
           total: resultadosCalculados.total,
@@ -136,9 +140,21 @@ const Test2Container = ({ setUserData, userData }) => {
                   <label>Edad *</label>
                   <input type="number" name="edad" value={userInfo.edad} onChange={handleUserInfoChange} placeholder="Tu edad" min="5" max="99" />
                 </div>
+                <div className="input-group">
+                  <label>Ocupación *</label>
+                  <select name="ocupacion" value={userInfo.ocupacion} onChange={handleUserInfoChange} required>
+                    {opcionesOcupacion.map(op => (
+                      <option key={op.value} value={op.value}>{op.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <label>¿En qué giro? (opcional)</label>
+                  <input type="text" name="giroEspecifico" value={userInfo.giroEspecifico} onChange={handleUserInfoChange} placeholder="Ej: Estética de belleza, Ventas, Educación..." maxLength={60} />
+                </div>
               </div>
             </div>
-            <button className="btn btn-secondary btn-block" onClick={() => setStep(1)} disabled={!userInfo.nombre || !userInfo.email || !userInfo.edad}>
+            <button className="btn btn-secondary btn-block" onClick={() => setStep(1)} disabled={!userInfo.nombre || !userInfo.email || !userInfo.edad || !userInfo.ocupacion}>
               Comenzar Test <FaArrowRight />
             </button>
           </motion.div>

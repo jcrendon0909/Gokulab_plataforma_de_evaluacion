@@ -16,6 +16,15 @@ const ResultadoSchema = new mongoose.Schema({
     min: 5,
     max: 99
   },
+  ocupacion: {
+    type: String,
+    default: null
+  },
+  giroEspecifico: {
+    type: String,
+    default: null,
+    trim: true
+  },
   tipoTest: {
     type: String,
     enum: ['inteligencias', 'emprendedor', 'liderazgo'],
@@ -44,5 +53,6 @@ const ResultadoSchema = new mongoose.Schema({
 ResultadoSchema.index({ nombre: 1 });
 ResultadoSchema.index({ fecha: -1 });
 ResultadoSchema.index({ tipoTest: 1 });
+ResultadoSchema.index({ ocupacion: 1 });
 
 module.exports = mongoose.model('Resultado', ResultadoSchema);

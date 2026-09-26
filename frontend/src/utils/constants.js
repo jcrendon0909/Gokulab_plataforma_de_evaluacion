@@ -1,8 +1,24 @@
 // ============================================
 // CONTACTO GŌKU LAB
 // ============================================
-export const GOKULAB_WHATSAPP = '525612668168'; // ← CAMBIA por tu número real
+export const GOKULAB_WHATSAPP = '521234567890'; // ← CAMBIA por tu número real
 export const GOKULAB_EMAIL = 'contacto@gokulab.mx';
+
+// ============================================
+// OPCIONES DE OCUPACIÓN
+// ============================================
+export const opcionesOcupacion = [
+  { value: '', label: 'Selecciona tu ocupación' },
+  { value: 'estudiante', label: 'Estudiante' },
+  { value: 'empleado', label: 'Empleado(a) / Colaborador(a)' },
+  { value: 'emprendedor', label: 'Emprendedor(a) / Dueño(a) de negocio' },
+  { value: 'freelancer', label: 'Freelancer / Independiente' },
+  { value: 'directivo', label: 'Directivo(a) / Gerente' },
+  { value: 'docente', label: 'Docente / Instructor(a)' },
+  { value: 'hogar', label: 'Labores del hogar' },
+  { value: 'buscando', label: 'Buscando oportunidad' },
+  { value: 'otro', label: 'Otro' }
+];
 
 // ============================================
 // TEST DE INTELIGENCIAS MÚLTIPLES
@@ -139,49 +155,42 @@ export const interpretacionesEmprendedor = {
 // TEST DE LIDERAZGO INTEGRAL
 // ============================================
 export const preguntasLiderazgo = [
-  // Estratégica (1-6)
   "Defino objetivos de largo plazo para mi equipo.",
   "Analizo cómo cada decisión afecta al resto de la organización.",
   "Distingo lo urgente de lo importante.",
   "Elaboro planes claros para alcanzar metas.",
   "Identifico riesgos antes de actuar.",
   "Tomo decisiones basadas en datos y evidencia.",
-  // Transformacional (7-12)
   "Motivo a otros a dar lo mejor de sí.",
   "Promuevo ideas nuevas y creativas.",
   "Transformo procesos para mejorar.",
   "Conecto el trabajo diario con un propósito mayor.",
   "Transmito entusiasmo y optimismo.",
   "Uso historias para motivar.",
-  // Operativa (13-18)
   "Verifico que las tareas se cumplan.",
   "Me aseguro de que se sigan los procesos.",
   "Reviso avances constantemente.",
   "Me enfoco en cumplir metas inmediatas.",
   "Corrijo errores rápidamente.",
   "Mantengo disciplina y estructura.",
-  // Social (19-24)
   "Comprendo las emociones de los demás.",
   "Expreso ideas con claridad.",
   "Presto atención genuina a las personas.",
   "Convenzo sin imponer.",
   "Manejo desacuerdos de forma constructiva.",
   "Construyo vínculos de confianza.",
-  // Adaptativa (25-30)
   "Me adapto a cambios inesperados.",
   "Mantengo la calma bajo presión.",
   "Busco aprender constantemente.",
   "Encuentro soluciones diferentes.",
   "Guío a otros durante cambios.",
   "Cambio de estrategia cuando es necesario.",
-  // Ética (31-36)
   "Trato a todos con equidad.",
   "Actúo conforme a mis valores.",
   "Asumo consecuencias de mis decisiones.",
   "Comunico con honestidad.",
   "Mis acciones reflejan mis principios.",
   "Genero credibilidad.",
-  // Desarrollo de Personas (37-42)
   "Ayudo a otros a mejorar.",
   "Comparto experiencia para guiar.",
   "Delego para desarrollar talento.",

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { GiBrain } from 'react-icons/gi';
 import toast from 'react-hot-toast';
@@ -9,24 +8,14 @@ import './Header.css';
 
 const Header = () => {
   const { user, logout, isAuthenticated } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const navItems = [
-    { path: '/', label: 'Inicio', icon: '🏠' },
-    { path: '/test/inteligencias', label: 'Inteligencias', icon: '🧠' },
-    { path: '/test/emprendedor', label: 'Emprendedor', icon: '🚀' },
-    { path: '/test/liderazgo', label: 'Liderazgo', icon: '👥' }, // ← NUEVO
-    { path: '/admin', label: 'Administrar', icon: '📊' }
-  ];
-
-  const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
     logout();
     navigate('/');
     toast.success('Sesión cerrada');
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -48,27 +37,8 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Solo Auth (Desktop) */}
           <nav className="nav-desktop">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                {item.label}
-                {isActive(item.path) && (
-                  <motion.div
-                    className="nav-indicator"
-                    layoutId="navIndicator"
-                    transition={{ type: 'spring', duration: 0.6 }}
-                  />
-                )}
-              </Link>
-            ))}
-
-            {/* Sección de autenticación */}
             {isAuthenticated ? (
               <div className="user-section">
                 <div className="user-badge">
@@ -87,7 +57,7 @@ const Header = () => {
           </nav>
 
           {/* Mobile Menu Toggle */}
-          <button 
+          <button
             className="menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -97,18 +67,6 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <nav className={`nav-mobile ${mobileMenuOpen ? 'open' : ''}`}>
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`nav-link-mobile ${isActive(item.path) ? 'active' : ''}`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              {item.label}
-            </Link>
-          ))}
-          {/* Mobile auth */}
           {isAuthenticated ? (
             <div className="user-mobile">
               <div className="user-badge-mobile">
@@ -120,7 +78,7 @@ const Header = () => {
               </button>
             </div>
           ) : (
-            <Link to="/login" className="nav-link-mobile">
+            <Link to="/login" className="nav-link-mobile" onClick={() => setMobileMenuOpen(false)}>
               <FaUser /> Login
             </Link>
           )}
