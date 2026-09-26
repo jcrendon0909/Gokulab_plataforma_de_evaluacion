@@ -27,7 +27,7 @@ const AdminPanel = () => {
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   // ===== EDICIÓN =====
-  const [editando, setEditando] = useState(null); // El resultado que se está editando
+  const [editando, setEditando] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [formEdit, setFormEdit] = useState({
     nombre: '', email: '', edad: '', ocupacion: '', giroEspecifico: ''
@@ -281,7 +281,14 @@ const AdminPanel = () => {
         <meta charset="UTF-8">
         <title>Reporte de Evaluación - ${resultado.nombre}</title>
         <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
           body {
             font-family: 'Times New Roman', Times, serif;
             background: white;
@@ -331,8 +338,21 @@ const AdminPanel = () => {
           }
           .detail-label { min-width: 120px; font-weight: 600; font-size: 11pt; }
           .detail-value { font-weight: 600; min-width: 50px; text-align: right; font-size: 11pt; }
-          .detail-bar { flex: 1; height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; }
-          .detail-fill { height: 100%; background: #26aaa3; border-radius: 5px; }
+          .detail-bar {
+            flex: 1;
+            height: 14px;
+            background: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            overflow: hidden;
+          }
+          .detail-fill {
+            height: 100%;
+            background: #26aaa3;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-radius: 7px;
+          }
           .detail-total {
             background: #f5f5f5;
             padding: 10px 15px;
@@ -341,6 +361,7 @@ const AdminPanel = () => {
             display: flex;
             gap: 20px;
             align-items: center;
+            border: 1px solid #ddd;
           }
           .total-label { font-weight: 600; }
           .total-value { font-weight: 700; font-size: 16pt; color: #d61a1f; }
@@ -371,6 +392,23 @@ const AdminPanel = () => {
           @media print {
             body { padding: 20px; }
             .detail-item, .analisis-section, .dominante { page-break-inside: avoid; }
+            .detail-fill {
+              background: #26aaa3 !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            .detail-bar {
+              background: #e9ecef !important;
+              border: 1px solid #999 !important;
+            }
+            .detail-total {
+              background: #f5f5f5 !important;
+              border: 1px solid #999 !important;
+            }
+            .dominante {
+              background: #fffcf0 !important;
+              border: 1px solid #f8b50e !important;
+            }
           }
         </style>
       </head>
@@ -503,7 +541,6 @@ const AdminPanel = () => {
                       ) : (
                         <span className="badge-pending"><FaClock /> Sin análisis</span>
                       )}
-                      {/* ===== BOTÓN EDITAR ===== */}
                       <button
                         className="btn-edit"
                         onClick={(e) => handleAbrirEdicion(result, e)}
@@ -511,7 +548,6 @@ const AdminPanel = () => {
                       >
                         <FaEdit />
                       </button>
-                      {/* ===== BOTÓN ELIMINAR ===== */}
                       <button
                         className="btn-delete"
                         onClick={(e) => {
