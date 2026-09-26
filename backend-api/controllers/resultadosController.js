@@ -96,3 +96,40 @@ exports.eliminarResultado = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar el registro' });
   }
 };
+exports.actualizarResultado = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, email, edad, ocupacion, giroEspecifico } = req.body;
+
+    if (!nombre || !nombre.trim()) {
+      return res.status(400).json({ error: 'El nombre es obligatorio' });
+    }
+
+    const datosActualizados = {
+      nombre: nombre.trim(),
+      email: email ? email.trim().toLowerCase() : '',
+      edad: edad ? parseInt(edad) : null,
+      ocupacion: ocupacion || null,
+      giroEspecifico: giroEspecifico ? giroEspecifico.trim() : null
+    };
+
+    const resultado = await Resultado.findByIdAndUpdate(
+      id,
+      { $set: datosActualizados },
+      { new: true, runValidators: true }
+    );
+
+    if (!resultado) {
+      return res.status(404).json({ error: 'Resultado no encontrado' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Registro actualizado exitosamente',
+      data: resultado
+    });
+  } catch (error) {
+    console.error('❌ Error actualizando resultado:', error);
+    res.status(500).json({ error: 'Error al actualizar el registro' });
+  }
+};

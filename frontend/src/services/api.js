@@ -101,5 +101,9 @@ const api = {
     return response.data;
   }
 };
-
+  // ===== ACTUALIZAR RESULTADO =====
+  actualizarResultado: async (resultadoId, datos) => {
+    const response = await apiClient.put(`/resultados/${resultadoId}`, datos);
+    return response.data;
+  }
 export default api;

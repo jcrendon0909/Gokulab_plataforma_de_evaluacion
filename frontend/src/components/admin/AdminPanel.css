@@ -401,3 +401,103 @@
   font-weight: 500;
   margin-top: 2px;
 }
+/* ===== BOTÓN EDITAR ===== */
+.btn-edit {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.85rem;
+}
+
+.btn-edit:hover {
+  background: #0284c7;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ===== MODAL DE EDICIÓN ===== */
+.modal-edit {
+  background: white;
+  border-radius: 20px;
+  padding: 30px 25px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-edit-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.modal-edit-header h3 {
+  color: #1a1a2e;
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+}
+
+.modal-edit-header p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.modal-edit-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.modal-edit-body .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-edit-body .input-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.modal-edit-body .input-group input,
+.modal-edit-body .input-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
+  transition: border-color 0.3s;
+  background: white;
+}
+
+.modal-edit-body .input-group input:focus,
+.modal-edit-body .input-group select:focus {
+  outline: none;
+  border-color: #26aaa3;
+  box-shadow: 0 0 0 4px rgba(38, 170, 163, 0.1);
+}
+
+@media (max-width: 768px) {
+  .modal-edit {
+    padding: 20px 18px;
+  }
+  .modal-actions {
+    flex-direction: column;
+  }
+  .modal-actions .btn {
+    width: 100%;
+  }
+}
