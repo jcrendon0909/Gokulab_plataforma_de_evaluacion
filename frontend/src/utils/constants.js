@@ -1,4 +1,10 @@
 // ============================================
+// CONTACTO GŌKU LAB
+// ============================================
+export const GOKULAB_WHATSAPP = '521234567890'; // ← CAMBIA por tu número real
+export const GOKULAB_EMAIL = 'contacto@gokulab.mx';
+
+// ============================================
 // TEST DE INTELIGENCIAS MÚLTIPLES
 // ============================================
 export const preguntasTest1 = [
@@ -103,14 +109,34 @@ export const atributosEmprendedores = [
 ];
 
 export const interpretacionesEmprendedor = {
-  excelente: { rango: [41, 50], titulo: '🌟 Vena Emprendedora Fuerte', descripcion: 'Excelente perfil emprendedor con sólidas bases para el éxito empresarial.', recomendaciones: ['Continúa desarrollando tus fortalezas', 'Considera expandir tu negocio', 'Comparte tu conocimiento mentorando a otros'] },
-  bueno: { rango: [31, 40], titulo: '💪 Buen Perfil, Necesita Estructura', descripcion: 'Tienes un potencial emprendedor significativo, pero necesitas mayor organización.', recomendaciones: ['Implementa sistemas de gestión', 'Establece rutinas claras', 'Busca capacitación en áreas débiles'] },
-  potencial: { rango: [21, 30], titulo: '🌱 Potencial Presente, Hábitos Débiles', descripcion: 'Muestras interés y potencial, pero necesitas fortalecer hábitos.', recomendaciones: ['Trabaja en disciplina diaria', 'Establece metas medibles', 'Busca un mentor'] },
-  inicial: { rango: [0, 20], titulo: '🚀 Etapa Inicial, Requiere Bases', descripcion: 'Te encuentras en las primeras etapas del desarrollo emprendedor.', recomendaciones: ['Busca capacitación básica', 'Desarrolla hábitos fundamentales', 'Comienza con metas pequeñas'] }
+  excelente: {
+    rango: [41, 50],
+    titulo: '🌟 Vena Emprendedora Fuerte',
+    descripcion: 'Excelente perfil emprendedor con sólidas bases para el éxito empresarial.',
+    recomendaciones: ['Continúa desarrollando tus fortalezas', 'Considera expandir tu negocio', 'Comparte tu conocimiento mentorando a otros']
+  },
+  bueno: {
+    rango: [31, 40],
+    titulo: '💪 Buen Perfil, Necesita Estructura',
+    descripcion: 'Tienes un potencial emprendedor significativo, pero necesitas mayor organización.',
+    recomendaciones: ['Implementa sistemas de gestión', 'Establece rutinas claras', 'Busca capacitación en áreas débiles']
+  },
+  potencial: {
+    rango: [21, 30],
+    titulo: '🌱 Potencial Presente, Hábitos Débiles',
+    descripcion: 'Muestras interés y potencial, pero necesitas fortalecer hábitos.',
+    recomendaciones: ['Trabaja en disciplina diaria', 'Establece metas medibles', 'Busca un mentor']
+  },
+  inicial: {
+    rango: [0, 20],
+    titulo: '🚀 Etapa Inicial, Requiere Bases',
+    descripcion: 'Te encuentras en las primeras etapas del desarrollo emprendedor.',
+    recomendaciones: ['Busca capacitación básica', 'Desarrolla hábitos fundamentales', 'Comienza con metas pequeñas']
+  }
 };
 
 // ============================================
-// TEST DE LIDERAZGO INTEGRAL (NUEVO)
+// TEST DE LIDERAZGO INTEGRAL
 // ============================================
 export const preguntasLiderazgo = [
   // Estratégica (1-6)
@@ -165,13 +191,13 @@ export const preguntasLiderazgo = [
 ];
 
 export const dimensionesLiderazgo = [
-  { id: 'estrategica', label: 'Estratégica', icon: '🎯', color: '#26aaa3', preguntas: [0,1,2,3,4,5] },
-  { id: 'transformacional', label: 'Transformacional', icon: '🔥', color: '#f8b50e', preguntas: [6,7,8,9,10,11] },
-  { id: 'operativa', label: 'Operativa', icon: '⚙️', color: '#67a934', preguntas: [12,13,14,15,16,17] },
-  { id: 'social', label: 'Social', icon: '🤝', color: '#4a90d9', preguntas: [18,19,20,21,22,23] },
-  { id: 'adaptativa', label: 'Adaptativa', icon: '🌀', color: '#9b59b6', preguntas: [24,25,26,27,28,29] },
-  { id: 'etica', label: 'Ética', icon: '⚖️', color: '#e67e22', preguntas: [30,31,32,33,34,35] },
-  { id: 'desarrollo', label: 'Desarrollo de Personas', icon: '🌱', color: '#e74c3c', preguntas: [36,37,38,39,40,41] }
+  { id: 'estrategica', label: 'Estratégica', icon: '🎯', color: '#26aaa3', preguntas: [0, 1, 2, 3, 4, 5] },
+  { id: 'transformacional', label: 'Transformacional', icon: '🔥', color: '#f8b50e', preguntas: [6, 7, 8, 9, 10, 11] },
+  { id: 'operativa', label: 'Operativa', icon: '⚙️', color: '#67a934', preguntas: [12, 13, 14, 15, 16, 17] },
+  { id: 'social', label: 'Social', icon: '🤝', color: '#4a90d9', preguntas: [18, 19, 20, 21, 22, 23] },
+  { id: 'adaptativa', label: 'Adaptativa', icon: '🌀', color: '#9b59b6', preguntas: [24, 25, 26, 27, 28, 29] },
+  { id: 'etica', label: 'Ética', icon: '⚖️', color: '#e67e22', preguntas: [30, 31, 32, 33, 34, 35] },
+  { id: 'desarrollo', label: 'Desarrollo de Personas', icon: '🌱', color: '#e74c3c', preguntas: [36, 37, 38, 39, 40, 41] }
 ];
 
 export const perfilesLiderazgo = {
@@ -179,8 +205,8 @@ export const perfilesLiderazgo = {
   'Líder Estratégico': 'Fuerte visión, ética sólida y foco en desarrollo de personas. Destacas en planificar el futuro y guiar a otros hacia metas ambiciosas.',
   'Líder Transformacional': 'Inspiras, movilizas el cambio y gestionas bien la adaptación. Tu energía y creatividad contagian al equipo.',
   'Líder Funcional': 'Combina ejecución operativa con buena inteligencia social. Eres efectivo tanto en el día a día como en las relaciones interpersonales.',
-  'Jefe Operativo': 'Fuerte en control y ejecución, con oportunidad de crecimiento en lo social y desarrollo de personas. Puedes evolucionar hacia un liderazgo más integral.',
-  'Perfil Mixto': 'Combina rasgos de jefe y líder. Recomendable trabajar en visión estratégica, desarrollo de personas y habilidades sociales para consolidar un liderazgo más integral.'
+  'Jefe Operativo': 'Fuerte en control y ejecución, con oportunidad de crecimiento en lo social y desarrollo de personas.',
+  'Perfil Mixto': 'Combina rasgos de jefe y líder. Recomendable trabajar en visión estratégica, desarrollo de personas y habilidades sociales.'
 };
 
 export function clasificarNivelLiderazgo(puntaje) {
@@ -191,10 +217,8 @@ export function clasificarNivelLiderazgo(puntaje) {
 
 export function obtenerPerfilLiderazgo(dimensiones) {
   const { estrategica, transformacional, operativa, social, adaptativa, etica, desarrollo } = dimensiones;
-
   const todasAltas = Object.values(dimensiones).every(v => v >= 23);
   if (todasAltas) return 'Líder Integral';
-
   if (estrategica >= 23 && etica >= 23 && desarrollo >= 23) return 'Líder Estratégico';
   if (transformacional >= 23 && social >= 23 && adaptativa >= 23) return 'Líder Transformacional';
   if (operativa >= 23 && social >= 23 && estrategica >= 16) return 'Líder Funcional';

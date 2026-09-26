@@ -24,7 +24,6 @@ exports.guardarResultado = async (req, res) => {
       id: saved._id,
       message: 'Resultado guardado exitosamente'
     });
-
   } catch (error) {
     console.error('❌ Error guardando resultado:', error);
     res.status(500).json({ error: 'Error al guardar el resultado' });
@@ -41,16 +40,10 @@ exports.consultarResultados = async (req, res) => {
     }
 
     const query = { nombre: { $regex: nombre, $options: 'i' } };
-    if (tipo) {
-      query.tipoTest = tipo;
-    }
+    if (tipo) query.tipoTest = tipo;
 
-    const resultados = await Resultado.find(query)
-      .sort({ fecha: -1 })
-      .limit(50);
-
+    const resultados = await Resultado.find(query).sort({ fecha: -1 }).limit(50);
     res.json(resultados);
-
   } catch (error) {
     console.error('❌ Error consultando resultados:', error);
     res.status(500).json({ error: 'Error al consultar los resultados' });
@@ -81,9 +74,29 @@ exports.listarResultados = async (req, res) => {
         pages: Math.ceil(total / limit)
       }
     });
-
   } catch (error) {
     console.error('❌ Error listando resultados:', error);
     res.status(500).json({ error: 'Error al listar los resultados' });
+  }
+};
+
+// ===== ELIMINAR un resultado por ID =====
+exports.eliminarResultado = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const resultado = await Resultado.findByIdAndDelete(id);
+
+    if (!resultado) {
+      return res.status(404).json({ error: 'Resultado no encontrado' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Registro eliminado exitosamente'
+    });
+  } catch (error) {
+    console.error('❌ Error eliminando resultado:', error);
+    res.status(500).json({ error: 'Error al eliminar el registro' });
   }
 };

@@ -3,7 +3,6 @@ import toast from 'react-hot-toast';
 
 const API_BASE = 'https://gokulab-plataforma-de-evaluacion.onrender.com/api';
 
-// Función para obtener las credenciales de sessionStorage
 const getAuth = () => {
   const stored = sessionStorage.getItem('adminUser');
   if (stored) {
@@ -16,14 +15,12 @@ const getAuth = () => {
   return null;
 };
 
-// Cliente base (sin credenciales por defecto)
 const apiClient = axios.create({
   baseURL: API_BASE,
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' }
 });
 
-// Interceptor para agregar autenticación solo cuando existan credenciales
 apiClient.interceptors.request.use(
   (config) => {
     const auth = getAuth();
@@ -38,7 +35,6 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor para manejar errores (401 = no autorizado)
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -67,9 +63,6 @@ const api = {
       });
       return { success: true };
     } catch (error) {
-      if (error.response?.status === 401) {
-        throw error;
-      }
       throw error;
     }
   },
@@ -99,6 +92,12 @@ const api = {
 
   generarAnalisis: async (resultadoId) => {
     const response = await apiClient.post(`/analisis/${resultadoId}`);
+    return response.data;
+  },
+
+  // ===== ELIMINAR RESULTADO =====
+  eliminarResultado: async (resultadoId) => {
+    const response = await apiClient.delete(`/resultados/${resultadoId}`);
     return response.data;
   }
 };

@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { FaSearch, FaUser, FaCalendar, FaTag, FaPrint, FaSort, FaCheckCircle, FaClock } from 'react-icons/fa';
+import {
+  FaSearch, FaUser, FaCalendar, FaTag, FaSort,
+  FaCheckCircle, FaClock, FaTrash, FaPrint
+} from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
 import FormattedText from '../common/FormattedText';
@@ -19,6 +22,8 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(false);
   const [selectedResult, setSelectedResult] = useState(null);
   const [generandoAnalisis, setGenerandoAnalisis] = useState({});
+  const [eliminando, setEliminando] = useState({});
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -64,6 +69,23 @@ const AdminPanel = () => {
     }
   };
 
+  // ===== ELIMINAR REGISTRO =====
+  const handleEliminar = async (resultadoId) => {
+    setEliminando(prev => ({ ...prev, [resultadoId]: true }));
+    try {
+      const response = await api.eliminarResultado(resultadoId);
+      if (response.success) {
+        setResultados(prev => prev.filter(r => r._id !== resultadoId));
+        toast.success('🗑️ Registro eliminado exitosamente');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Error al eliminar el registro');
+    } finally {
+      setEliminando(prev => ({ ...prev, [resultadoId]: false }));
+      setConfirmDelete(null);
+    }
+  };
+
   const getResultadosFiltrados = () => {
     let filtrados = [...resultados];
     if (tipoTest !== 'todos') {
@@ -87,252 +109,6 @@ const AdminPanel = () => {
     day: '2-digit', month: '2-digit', year: 'numeric',
     hour: '2-digit', minute: '2-digit'
   });
-
-  // ===== GENERAR REPORTE EN VENTANA NUEVA =====
-  const generarReporte = (resultado) => {
-    const ventana = window.open('', '_blank', 'width=800,height=600');
-    if (!ventana) {
-      toast.error('Permite ventanas emergentes para generar el reporte');
-      return;
-    }
-    const html = generarHTMLReporte(resultado);
-    ventana.document.write(html);
-    ventana.document.close();
-    ventana.focus();
-    ventana.onload = function() {
-      ventana.print();
-    };
-  };
-
-  // ===== GENERAR HTML DEL REPORTE (SOPORTE PARA LOS 3 TESTS) =====
-  const generarHTMLReporte = (resultado) => {
-    const fechaFormateada = formatDate(resultado.fecha);
-    const tipo = resultado.tipoTest;
-
-    let titulo = '';
-    let detallesHTML = '';
-    let dominanteHTML = '';
-
-    if (tipo === 'inteligencias') {
-      titulo = '🧠 Inteligencias Múltiples';
-      detallesHTML = resultado.resultados.map((r, i) => `
-        <div class="detail-item">
-          <span class="detail-label">${r.tipo}</span>
-          <span class="detail-value">${r.puntaje}/8</span>
-          <div class="detail-bar">
-            <div class="detail-fill" style="width: ${r.porcentaje}%;"></div>
-          </div>
-        </div>
-      `).join('');
-      if (resultado.inteligenciaDominante) {
-        dominanteHTML = `
-          <div class="dominante">
-            🏆 Inteligencia Dominante: <strong>${resultado.inteligenciaDominante}</strong>
-          </div>
-        `;
-      }
-    } else if (tipo === 'emprendedor') {
-      titulo = '🚀 Actitud Emprendedora';
-      detallesHTML = `
-        <div class="detail-total">
-          <span class="total-label">Puntaje Total:</span>
-          <span class="total-value">${resultado.resultados.total}/50</span>
-        </div>
-        ${resultado.resultados.detalle?.map((attr, i) => `
-          <div class="detail-item">
-            <span class="detail-label">${attr.icono || ''} ${attr.nombre}</span>
-            <span class="detail-value">${attr.puntaje}/5</span>
-            <div class="detail-bar">
-              <div class="detail-fill" style="width: ${(attr.puntaje / 5) * 100}%;"></div>
-            </div>
-          </div>
-        `).join('')}
-      `;
-    } else if (tipo === 'liderazgo') {
-      titulo = '👥 Liderazgo Integral';
-      const dims = resultado.resultados.detalle || [];
-      detallesHTML = `
-        <div class="detail-total">
-          <span class="total-label">Puntaje Total:</span>
-          <span class="total-value">${resultado.resultados.puntajeTotal}/210</span>
-        </div>
-        <div class="detail-perfil">
-          <strong>Perfil:</strong> ${resultado.resultados.perfil}
-        </div>
-        <div class="detail-descripcion">
-          <p>${resultado.resultados.descripcion || ''}</p>
-        </div>
-        ${dims.map((dim, i) => `
-          <div class="detail-item">
-            <span class="detail-label">${dim.icon || ''} ${dim.label}</span>
-            <span class="detail-value">${dim.puntaje}/30</span>
-            <div class="detail-bar">
-              <div class="detail-fill" style="width: ${(dim.puntaje / 30) * 100}%; background: ${dim.color || '#26aaa3'};"></div>
-            </div>
-            <span class="detail-nivel" style="font-size: 0.75rem; color: #666;">(${dim.nivel})</span>
-          </div>
-        `).join('')}
-      `;
-    }
-
-    // Análisis
-    const analisisHTML = resultado.analisis ? `
-      <div class="analisis-section">
-        <h3>📊 Análisis personalizado</h3>
-        <div class="analisis-contenido">
-          ${resultado.analisis.split('\n').map(line => `<p>${line}</p>`).join('')}
-        </div>
-      </div>
-    ` : '';
-
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>Reporte de Evaluación - ${resultado.nombre}</title>
-        <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body {
-            font-family: 'Times New Roman', Times, serif;
-            background: white;
-            color: #1a1a2e;
-            padding: 40px 50px;
-            line-height: 1.6;
-          }
-          .reporte { max-width: 900px; margin: 0 auto; }
-          .header {
-            text-align: center;
-            border-bottom: 3px solid #26aaa3;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-          }
-          .header h1 { font-size: 28pt; color: #26aaa3; letter-spacing: 1px; }
-          .header .slogan { font-size: 14pt; color: #555; }
-          .header .slogan span { font-weight: 700; }
-          .header .slogan .juega { color: #f8b50e; }
-          .header .slogan .aprende { color: #d61a1f; }
-          .header .slogan .emprende { color: #67a934; }
-
-          .info-usuario {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12pt;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-          }
-          .info-usuario .nombre { font-weight: 700; font-size: 14pt; }
-
-          .titulo-seccion {
-            font-size: 16pt;
-            font-weight: 700;
-            margin: 20px 0 10px 0;
-            color: #26aaa3;
-            border-bottom: 2px solid #26aaa3;
-            padding-bottom: 5px;
-          }
-
-          .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 5px 0;
-          }
-          .detail-label { min-width: 120px; font-weight: 600; font-size: 11pt; }
-          .detail-value { font-weight: 600; min-width: 50px; text-align: right; font-size: 11pt; }
-          .detail-bar { flex: 1; height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; }
-          .detail-fill { height: 100%; background: #26aaa3; border-radius: 5px; }
-
-          .detail-total {
-            background: #f5f5f5;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-          }
-          .total-label { font-weight: 600; }
-          .total-value { font-weight: 700; font-size: 16pt; color: #d61a1f; }
-
-          .dominante {
-            background: #fffcf0;
-            border: 1px solid #f8b50e;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            text-align: center;
-            font-size: 12pt;
-          }
-          .dominante strong { color: #f8b50e; }
-
-          .detail-perfil, .detail-descripcion {
-            margin: 8px 0;
-          }
-          .detail-descripcion p {
-            font-size: 11pt;
-            line-height: 1.5;
-            color: #333;
-          }
-          .detail-nivel {
-            font-size: 0.75rem;
-            color: #666;
-            margin-left: 4px;
-          }
-
-          .analisis-section {
-            margin-top: 25px;
-            border-top: 2px solid #ddd;
-            padding-top: 15px;
-          }
-          .analisis-section h3 { color: #26aaa3; font-size: 14pt; margin-bottom: 10px; }
-          .analisis-contenido p { margin: 8px 0; text-align: justify; font-size: 11pt; line-height: 1.6; }
-
-          .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 10pt;
-            color: #999;
-            border-top: 1px solid #ddd;
-            padding-top: 15px;
-          }
-
-          @media print {
-            body { padding: 20px; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="reporte">
-          <div class="header">
-            <h1>GŌKU LAB</h1>
-            <div class="slogan">
-              <span class="juega">Juega</span>
-              <span class="aprende">Aprende</span>
-              <span class="emprende">Emprende</span>
-            </div>
-          </div>
-
-          <div class="info-usuario">
-            <span class="nombre">${resultado.nombre}</span>
-            <span>${fechaFormateada}</span>
-          </div>
-
-          <div class="titulo-seccion">${titulo}</div>
-
-          ${detallesHTML}
-          ${dominanteHTML}
-          ${analisisHTML}
-
-          <div class="footer">
-            © ${new Date().getFullYear()} GŌKU LAB · Reporte generado automáticamente
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-  };
 
   if (authLoading) return <div className="loading-state">Cargando...</div>;
   if (!isAuthenticated) return null;
@@ -365,7 +141,7 @@ const AdminPanel = () => {
                   <option value="todos">Todos los tests</option>
                   <option value="inteligencias">🧠 Inteligencias</option>
                   <option value="emprendedor">🚀 Emprendedor</option>
-                  <option value="liderazgo">👥 Liderazgo</option> {/* ← NUEVO */}
+                  <option value="liderazgo">👥 Liderazgo</option>
                 </select>
               </div>
               <div className="filter-group">
@@ -390,22 +166,35 @@ const AdminPanel = () => {
               <div className="empty-state"><p>No se encontraron resultados</p></div>
             ) : (
               resultadosFiltrados.map((result) => (
-                <motion.div key={result._id} className="result-item" onClick={() => setSelectedResult(selectedResult === result._id ? null : result._id)}>
+                <motion.div
+                  key={result._id}
+                  className="result-item"
+                  onClick={() => setSelectedResult(selectedResult === result._id ? null : result._id)}
+                >
                   <div className="result-header">
                     <div className="result-user">
                       <FaUser />
-                      <span className="result-name">{result.nombre}</span>
+                      <div className="result-user-info">
+                        <span className="result-name">{result.nombre}</span>
+                        {result.email && (
+                          <a
+                            href={`mailto:${result.email}?cc=contacto@gokulab.mx&subject=Interpretación de tu test - GŌKU LAB&body=Hola ${result.nombre},%0D%0A%0D%0AGracias por realizar el test en GŌKU LAB. Adjunto encontrarás la interpretación completa de tus resultados.%0D%0A%0D%0ASaludos cordiales,%0D%0AEquipo GŌKU LAB`}
+                            className="result-email"
+                            onClick={(e) => e.stopPropagation()}
+                            title={`Enviar correo a ${result.email}`}
+                          >
+                            ✉️ {result.email}
+                          </a>
+                        )}
+                      </div>
                       <span className="result-badge">
-                        {result.tipoTest === 'inteligencias' ? '🧠' : 
-                         result.tipoTest === 'emprendedor' ? '🚀' : 
-                         '👥'}
+                        {result.tipoTest === 'inteligencias' ? '🧠' : result.tipoTest === 'emprendedor' ? '🚀' : '👥'}
                       </span>
                     </div>
                     <div className="result-meta">
                       <span className="result-tipo">
-                        {result.tipoTest === 'inteligencias' ? 'Inteligencias Múltiples' : 
-                         result.tipoTest === 'emprendedor' ? 'Actitud Emprendedora' : 
-                         'Liderazgo Integral'}
+                        {result.tipoTest === 'inteligencias' ? 'Inteligencias Múltiples' :
+                         result.tipoTest === 'emprendedor' ? 'Actitud Emprendedora' : 'Liderazgo Integral'}
                       </span>
                       <span className="result-fecha"><FaCalendar /> {formatDate(result.fecha)}</span>
                       {result.analisis ? (
@@ -413,12 +202,29 @@ const AdminPanel = () => {
                       ) : (
                         <span className="badge-pending"><FaClock /> Sin análisis</span>
                       )}
+                      {/* ===== BOTÓN ELIMINAR ===== */}
+                      <button
+                        className="btn-delete"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmDelete(result);
+                        }}
+                        title="Eliminar registro"
+                      >
+                        <FaTrash />
+                      </button>
                       <span className="result-expand">{selectedResult === result._id ? '▲' : '▼'}</span>
                     </div>
                   </div>
+
                   <AnimatePresence>
                     {selectedResult === result._id && (
-                      <motion.div className="result-detail" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+                      <motion.div
+                        className="result-detail"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                      >
                         {result.tipoTest === 'inteligencias' ? (
                           <div className="detail-inteligencias">
                             {result.resultados.map((r, i) => (
@@ -434,7 +240,10 @@ const AdminPanel = () => {
                           </div>
                         ) : result.tipoTest === 'emprendedor' ? (
                           <div className="detail-emprendedor">
-                            <div className="detail-total"><span className="total-label">Puntaje Total:</span><span className="total-value">{result.resultados.total}/50</span></div>
+                            <div className="detail-total">
+                              <span className="total-label">Puntaje Total:</span>
+                              <span className="total-value">{result.resultados.total}/50</span>
+                            </div>
                             {result.resultados.detalle?.map((attr, i) => (
                               <div key={i} className="detail-item">
                                 <span className="detail-label">{attr.icono} {attr.nombre}</span>
@@ -444,18 +253,13 @@ const AdminPanel = () => {
                             ))}
                           </div>
                         ) : (
-                          // ===== BLOQUE PARA LIDERAZGO =====
                           <div className="detail-liderazgo">
                             <div className="detail-total">
                               <span className="total-label">Puntaje Total:</span>
                               <span className="total-value">{result.resultados.puntajeTotal}/210</span>
                             </div>
-                            <div className="detail-perfil">
-                              <strong>Perfil:</strong> {result.resultados.perfil}
-                            </div>
-                            <div className="detail-descripcion">
-                              <p>{result.resultados.descripcion || ''}</p>
-                            </div>
+                            <div className="detail-perfil"><strong>Perfil:</strong> {result.resultados.perfil}</div>
+                            <div className="detail-descripcion"><p>{result.resultados.descripcion || ''}</p></div>
                             {result.resultados.detalle?.map((dim, i) => (
                               <div key={i} className="detail-item">
                                 <span className="detail-label">{dim.icon} {dim.label}</span>
@@ -468,8 +272,13 @@ const AdminPanel = () => {
                             ))}
                           </div>
                         )}
+
                         <div className="analisis-section">
-                          <button className="btn btn-secondary" onClick={() => handleGenerarAnalisis(result._id)} disabled={generandoAnalisis[result._id]}>
+                          <button
+                            className="btn btn-secondary"
+                            onClick={() => handleGenerarAnalisis(result._id)}
+                            disabled={generandoAnalisis[result._id]}
+                          >
                             {generandoAnalisis[result._id] ? '⏳ Generando...' : result.analisis ? '🔄 Regenerar análisis' : '🤖 Generar análisis personalizado'}
                           </button>
                           {result.analisis && (
@@ -479,9 +288,6 @@ const AdminPanel = () => {
                             </div>
                           )}
                         </div>
-                        <button className="btn btn-outline btn-print" onClick={() => generarReporte(result)}>
-                          <FaPrint /> Imprimir reporte
-                        </button>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -491,6 +297,42 @@ const AdminPanel = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* ===== MODAL DE CONFIRMACIÓN ===== */}
+      {confirmDelete && (
+        <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
+          <motion.div
+            className="modal-confirm"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-icon">🗑️</div>
+            <h3>¿Eliminar registro?</h3>
+            <p>
+              Estás a punto de eliminar el registro de <strong>{confirmDelete.nombre}</strong>.
+              <br />
+              Esta acción no se puede deshacer.
+            </p>
+            <div className="modal-actions">
+              <button
+                className="btn btn-outline"
+                onClick={() => setConfirmDelete(null)}
+                disabled={eliminando[confirmDelete._id]}
+              >
+                Cancelar
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={() => handleEliminar(confirmDelete._id)}
+                disabled={eliminando[confirmDelete._id]}
+              >
+                {eliminando[confirmDelete._id] ? 'Eliminando...' : 'Sí, eliminar'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
