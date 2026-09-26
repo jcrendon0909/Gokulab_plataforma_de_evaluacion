@@ -95,15 +95,17 @@ const api = {
     return response.data;
   },
 
+  // ===== ACTUALIZAR RESULTADO (EDITAR) =====
+  actualizarResultado: async (resultadoId, datos) => {
+    const response = await apiClient.put(`/resultados/${resultadoId}`, datos);
+    return response.data;
+  },
+
   // ===== ELIMINAR RESULTADO =====
   eliminarResultado: async (resultadoId) => {
     const response = await apiClient.delete(`/resultados/${resultadoId}`);
     return response.data;
   }
 };
-  // ===== ACTUALIZAR RESULTADO =====
-  actualizarResultado: async (resultadoId, datos) => {
-    const response = await apiClient.put(`/resultados/${resultadoId}`, datos);
-    return response.data;
-  }
+
 export default api;
