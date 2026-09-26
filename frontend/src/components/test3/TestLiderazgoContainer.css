@@ -1,289 +1,442 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { FaArrowLeft, FaArrowRight, FaUsers } from 'react-icons/fa';
-import {
-  preguntasLiderazgo,
-  dimensionesLiderazgo,
-  clasificarNivelLiderazgo,
-  obtenerPerfilLiderazgo,
-  perfilesLiderazgo,
-  GOKULAB_WHATSAPP
-} from '../../utils/constants';
-import api from '../../services/api';
-import './TestLiderazgoContainer.css';
+/* ============================================
+   TEST DE LIDERAZGO INTEGRAL - ESTILOS
+   ============================================ */
 
-const TestLiderazgoContainer = ({ setUserData, userData }) => {
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [currentDimensionIndex, setCurrentDimensionIndex] = useState(0);
-  const [userInfo, setUserInfo] = useState({
-    nombre: userData?.nombre || '',
-    email: userData?.email || '',
-    edad: ''
-  });
-  const [respuestas, setRespuestas] = useState({});
-  const [resultados, setResultados] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+.test-liderazgo-container {
+  padding: 20px 0;
+}
 
-  const totalDimensiones = dimensionesLiderazgo.length;
-  const dimensionActual = dimensionesLiderazgo[currentDimensionIndex];
-  const preguntasDimension = dimensionActual?.preguntas.map(idx => preguntasLiderazgo[idx]) || [];
+.step-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
 
-  useEffect(() => {
-    const inicial = {};
-    preguntasLiderazgo.forEach((_, index) => { inicial[index] = null; });
-    setRespuestas(inicial);
-  }, []);
+/* ===== ENCABEZADO DEL PASO ===== */
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
 
-  const handleUserInfoChange = (e) => {
-    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
-  };
+.step-icon {
+  font-size: 2.5rem;
+}
 
-  const handleRespuesta = (index, value) => {
-    setRespuestas(prev => ({ ...prev, [index]: parseInt(value) }));
-  };
+.step-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0;
+}
 
-  const calcularResultados = () => {
-    const puntajes = {};
-    dimensionesLiderazgo.forEach(dim => {
-      let sum = 0;
-      dim.preguntas.forEach(idx => { sum += respuestas[idx] || 0; });
-      puntajes[dim.id] = sum;
-    });
-    const total = Object.values(puntajes).reduce((a, b) => a + b, 0);
-    const perfil = obtenerPerfilLiderazgo(puntajes);
-    const descripcion = perfilesLiderazgo[perfil] || 'Perfil no definido';
-    return {
-      dimensiones: puntajes,
-      puntajeTotal: total,
-      perfil,
-      descripcion,
-      detalle: dimensionesLiderazgo.map(dim => ({
-        id: dim.id, label: dim.label, icon: dim.icon, color: dim.color,
-        puntaje: puntajes[dim.id], nivel: clasificarNivelLiderazgo(puntajes[dim.id])
-      }))
-    };
-  };
+.step-description {
+  color: #555;
+  line-height: 1.8;
+  font-size: 1.05rem;
+  margin-bottom: 25px;
+}
 
-  const handleEnviarResultados = async () => {
-    if (!userInfo.nombre || !userInfo.email || !userInfo.edad) {
-      toast.error('Por favor completa todos tus datos');
-      return;
-    }
-    const todasRespondidas = Object.values(respuestas).every(v => v !== null);
-    if (!todasRespondidas) {
-      toast.error('Responde todas las preguntas para obtener un perfil válido');
-      return;
-    }
+/* ===== COPY INICIAL ===== */
+.intro-container {
+  padding: 35px 40px;
+}
 
-    setIsLoading(true);
-    const resultadosCalculados = calcularResultados();
+.intro-copy {
+  background: linear-gradient(135deg, #f0fffe 0%, #f8fff0 100%);
+  border-left: 5px solid #26aaa3;
+  border-radius: 0 12px 12px 0;
+  padding: 20px 24px;
+  margin: 20px 0 25px 0;
+  box-shadow: 0 4px 15px rgba(38, 170, 163, 0.08);
+}
 
-    try {
-      const data = {
-        nombre: userInfo.nombre.trim(),
-        email: userInfo.email.trim(),
-        edad: parseInt(userInfo.edad),
-        tipoTest: 'liderazgo',
-        resultados: {
-          dimensiones: resultadosCalculados.dimensiones,
-          puntajeTotal: resultadosCalculados.puntajeTotal,
-          perfil: resultadosCalculados.perfil,
-          descripcion: resultadosCalculados.descripcion,
-          detalle: resultadosCalculados.detalle
-        }
-      };
-      const response = await api.guardarResultado(data);
-      if (response.success || response.warning) {
-        setUserData({ nombre: userInfo.nombre, email: userInfo.email });
-        localStorage.setItem('gokulab_user', JSON.stringify({ nombre: userInfo.nombre, email: userInfo.email }));
-        setResultados(resultadosCalculados);
-        setCurrentStep(2);
-        toast.success('¡Resultados guardados exitosamente!');
-      }
-    } catch (error) {
-      toast.error('Error al guardar los resultados');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+.intro-copy p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #1a1a2e;
+  margin: 0;
+  text-align: justify;
+}
 
-  const handleWhatsApp = () => {
-    const mensaje = encodeURIComponent(
-      `¡Hola GŌKU LAB! Acabo de completar el Test de Liderazgo Integral.\n\n` +
-      `Nombre: ${userInfo.nombre}\n` +
-      `Email: ${userInfo.email}\n` +
-      `Perfil: ${resultados.perfil}\n` +
-      `Puntaje: ${resultados.puntajeTotal}/210\n\n` +
-      `Me gustaría solicitar mis resultados e interpretación completa. ¡Gracias!`
-    );
-    window.open(`https://wa.me/${GOKULAB_WHATSAPP}?text=${mensaje}`, '_blank');
-  };
+.intro-copy strong {
+  color: #26aaa3;
+  font-weight: 700;
+}
 
-  // PASO 0: INTRO CON INFOGRAFÍA
-  if (currentStep === 0) {
-    return (
-      <div className="test-liderazgo-container">
-        <div className="container">
-          <motion.div className="step-container intro-container" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <div className="step-header">
-              <div className="step-icon"><FaUsers /></div>
-              <h2 className="step-title">👥 Test de Liderazgo Integral</h2>
-            </div>
+/* ===== INFOGRAFÍA ===== */
+.intro-infografia {
+  margin: 25px auto;
+  text-align: center;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+}
 
-            <div className="intro-copy">
-              <p>
-                Es importante que conozcas tus <strong>fortalezas</strong> y <strong>áreas de oportunidad</strong> en las
-                siete dimensiones del <strong>liderazgo gerencial</strong>, pero lo es más, que nos permitas enviarte
-                las <strong>acciones concretas para robustecerlas</strong>.
-              </p>
-            </div>
+.infografia-img {
+  width: 100%;
+  max-width: 550px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease;
+  display: block;
+}
 
-            <div className="intro-infografia">
-              <img
-                src="/images/infografia-liderazgo.png"
-                alt="Siete dimensiones del liderazgo gerencial - GŌKU LAB"
-                className="infografia-img"
-              />
-            </div>
+.infografia-img:hover {
+  transform: scale(1.02);
+}
 
-            <div className="info-box">
-              <h4>📝 Instrucciones</h4>
-              <ul>
-                <li>✓ Responde todas las preguntas con honestidad.</li>
-                <li>✓ Piensa en tu comportamiento habitual en el trabajo o equipo.</li>
-                <li>✓ Escala: 1 = Casi nunca, 2 = Rara vez, 3 = A veces, 4 = Frecuentemente, 5 = Casi siempre.</li>
-                <li>✓ El test consta de 7 dimensiones con 6 preguntas cada una.</li>
-              </ul>
-            </div>
+/* ===== INFO BOX (INSTRUCCIONES) ===== */
+.info-box {
+  background: #f0fffe;
+  border-left: 4px solid #26aaa3;
+  padding: 20px 25px;
+  border-radius: 0 10px 10px 0;
+  margin-bottom: 25px;
+}
 
-            <div className="form-section">
-              <h4>📋 Datos Personales</h4>
-              <div className="form-grid">
-                <div className="input-group">
-                  <label>Nombre Completo *</label>
-                  <input type="text" name="nombre" value={userInfo.nombre} onChange={handleUserInfoChange} placeholder="Tu nombre completo" />
-                </div>
-                <div className="input-group">
-                  <label>Email *</label>
-                  <input type="email" name="email" value={userInfo.email} onChange={handleUserInfoChange} placeholder="tu@email.com" />
-                </div>
-                <div className="input-group">
-                  <label>Edad *</label>
-                  <input type="number" name="edad" value={userInfo.edad} onChange={handleUserInfoChange} placeholder="Tu edad" min="5" max="99" />
-                </div>
-              </div>
-            </div>
+.info-box h4 {
+  color: #26aaa3;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
 
-            <button className="btn btn-primary btn-block" onClick={() => setCurrentStep(1)} disabled={!userInfo.nombre || !userInfo.email || !userInfo.edad}>
-              Comenzar Test <FaArrowRight />
-            </button>
-          </motion.div>
-        </div>
-      </div>
-    );
+.info-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-box ul li {
+  padding: 5px 0;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* ===== FORMULARIO ===== */
+.form-section {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.form-section h4 {
+  color: #26aaa3;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #26aaa3;
+  box-shadow: 0 0 0 4px rgba(38, 170, 163, 0.1);
+}
+
+/* ===== PROGRESO ===== */
+.progress-header {
+  margin-bottom: 20px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.progress-bar {
+  background: #e9ecef;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #26aaa3, #67a934);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.dimension-progress .progress-fill {
+  background: #f8b50e;
+}
+
+/* ===== DIMENSIÓN ACTUAL ===== */
+.dimension-header {
+  border-left: 4px solid #26aaa3;
+  padding-left: 15px;
+  margin-bottom: 20px;
+}
+
+.dimension-header h3 {
+  font-size: 1.3rem;
+  color: #1a1a2e;
+  margin: 0 0 4px 0;
+}
+
+.dimension-header p {
+  color: #666;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* ===== PREGUNTAS ===== */
+.questions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.question-item {
+  background: #f8f9fa;
+  padding: 15px 20px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.question-item:hover {
+  border-color: #26aaa3;
+}
+
+.question-text {
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #1a1a2e;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.scale-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.scale-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s;
+  min-width: 40px;
+}
+
+.scale-option:hover {
+  border-color: #26aaa3;
+}
+
+.scale-option input {
+  display: none;
+}
+
+.scale-option span {
+  font-weight: 600;
+  color: #555;
+}
+
+.scale-option.selected {
+  border-color: #26aaa3;
+  background: #e8f8f7;
+}
+
+.scale-option.selected span {
+  color: #26aaa3;
+}
+
+/* ===== BOTONES DE NAVEGACIÓN ===== */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.navigation-buttons .btn {
+  min-width: 150px;
+}
+
+/* ===== RESULTADOS ===== */
+.results-container {
+  padding: 30px;
+}
+
+.results-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.results-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 5px;
+}
+
+.results-subtitle {
+  color: #666;
+  font-size: 1.05rem;
+}
+
+.puntaje-total-liderazgo {
+  background: linear-gradient(135deg, #26aaa3, #67a934);
+  color: white;
+  padding: 25px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.puntaje-total-liderazgo .puntaje-numero {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.puntaje-total-liderazgo .puntaje-categoria {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.perfil-descripcion {
+  background: #f0f7ff;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid #4a90d9;
+  margin-bottom: 20px;
+}
+
+.perfil-descripcion h4 {
+  color: #4a90d9;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+.perfil-descripcion p {
+  color: #333;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.result-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.result-actions .btn {
+  min-width: 200px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .step-container {
+    padding: 20px 15px;
   }
 
-  // PASO 1: PREGUNTAS
-  if (currentStep === 1) {
-    const totalPreguntas = preguntasLiderazgo.length;
-    const respondidas = Object.values(respuestas).filter(v => v !== null).length;
-    const progreso = Math.round((respondidas / totalPreguntas) * 100);
-    const dimensionProgress = ((currentDimensionIndex + 1) / totalDimensiones) * 100;
-
-    return (
-      <div className="test-liderazgo-container">
-        <div className="container">
-          <motion.div className="step-container" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <div className="progress-header">
-              <div className="progress-info">
-                <span>📊 Dimensión {currentDimensionIndex + 1} de {totalDimensiones}: {dimensionActual.label}</span>
-                <span>{respondidas}/{totalPreguntas} preguntas</span>
-              </div>
-              <div className="progress-bar">
-                <motion.div className="progress-fill" initial={{ width: 0 }} animate={{ width: `${progreso}%` }} transition={{ duration: 0.5 }} />
-              </div>
-              <div className="progress-bar dimension-progress">
-                <motion.div className="progress-fill" style={{ background: dimensionActual.color }} initial={{ width: 0 }} animate={{ width: `${dimensionProgress}%` }} transition={{ duration: 0.5 }} />
-              </div>
-            </div>
-
-            <div className="dimension-header" style={{ borderColor: dimensionActual.color }}>
-              <h3>{dimensionActual.icon} {dimensionActual.label}</h3>
-              <p>Responde las siguientes 6 preguntas sobre tu comportamiento habitual.</p>
-            </div>
-
-            <div className="questions-container">
-              {preguntasDimension.map((pregunta, localIndex) => {
-                const globalIndex = dimensionActual.preguntas[localIndex];
-                return (
-                  <div key={globalIndex} className="question-item">
-                    <div className="question-text">{localIndex + 1}. {pregunta}</div>
-                    <div className="scale-options">
-                      {[1, 2, 3, 4, 5].map(val => (
-                        <label key={val} className={`scale-option ${respuestas[globalIndex] === val ? 'selected' : ''}`}>
-                          <input type="radio" name={`q${globalIndex}`} value={val} checked={respuestas[globalIndex] === val} onChange={() => handleRespuesta(globalIndex, val)} />
-                          <span>{val}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="navigation-buttons">
-              <button className="btn btn-outline" onClick={() => { currentDimensionIndex > 0 ? setCurrentDimensionIndex(currentDimensionIndex - 1) : setCurrentStep(0); }}>
-                <FaArrowLeft /> {currentDimensionIndex > 0 ? 'Anterior dimensión' : 'Atrás'}
-              </button>
-              <button className="btn btn-primary" onClick={() => {
-                if (!dimensionActual.preguntas.every(idx => respuestas[idx] !== null)) {
-                  toast.error('Responde todas las preguntas de esta dimensión');
-                  return;
-                }
-                currentDimensionIndex < totalDimensiones - 1 ? setCurrentDimensionIndex(currentDimensionIndex + 1) : handleEnviarResultados();
-              }} disabled={isLoading}>
-                {currentDimensionIndex < totalDimensiones - 1 ? (<>Siguiente dimensión <FaArrowRight /></>) : (isLoading ? 'Guardando...' : 'Ver Resultados')}
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
+  .intro-container {
+    padding: 20px 15px;
   }
 
-  // PASO 2: RESULTADOS
-  return (
-    <div className="test-liderazgo-container">
-      <div className="container">
-        <motion.div className="step-container results-container" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-          <div className="results-header">
-            <h2 className="results-title">🎯 ¡Perfil de Liderazgo!</h2>
-            <p className="results-subtitle">{userInfo.nombre}, aquí está tu perfil</p>
-          </div>
+  .step-title {
+    font-size: 1.5rem;
+  }
 
-          <div className="puntaje-total-liderazgo">
-            <div className="puntaje-numero">{resultados.puntajeTotal}/210</div>
-            <div className="puntaje-categoria">{resultados.perfil}</div>
-          </div>
+  .step-icon {
+    font-size: 2rem;
+  }
 
-          <div className="perfil-descripcion">
-            <h4>📌 Tu perfil de liderazgo</h4>
-            <p>{resultados.descripcion}</p>
-          </div>
+  .intro-copy {
+    padding: 16px 18px;
+  }
 
-          <div className="result-actions">
-            <button className="btn btn-primary" onClick={() => navigate('/')}>🏠 Inicio</button>
-            <button className="btn btn-secondary" onClick={handleWhatsApp}>
-              📩 Solicita tus resultados e interpretación
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-};
+  .intro-copy p {
+    font-size: 0.95rem;
+    text-align: left;
+  }
 
-export default TestLiderazgoContainer;
+  .infografia-img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .navigation-buttons {
+    flex-direction: column;
+  }
+
+  .navigation-buttons .btn {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .results-title {
+    font-size: 1.5rem;
+  }
+
+  .puntaje-total-liderazgo .puntaje-numero {
+    font-size: 2.5rem;
+  }
+
+  .puntaje-total-liderazgo .puntaje-categoria {
+    font-size: 1.1rem;
+  }
+
+  .result-actions {
+    flex-direction: column;
+  }
+
+  .result-actions .btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
