@@ -1,7 +1,7 @@
 // ============================================
 // CONTACTO GŌKU LAB
 // ============================================
-export const GOKULAB_WHATSAPP = '521234567890'; // ← CAMBIA por tu número real
+export const GOKULAB_WHATSAPP = '525612668168'; // ← CAMBIA por tu número real
 export const GOKULAB_EMAIL = 'contacto@gokulab.mx';
 
 // ============================================
